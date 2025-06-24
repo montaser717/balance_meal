@@ -1,5 +1,4 @@
 import 'package:balance_meal/services/fake_meal_service.dart';
-import 'package:balance_meal/services/hive_meal_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../bloc/diary/diary_cubit.dart';
