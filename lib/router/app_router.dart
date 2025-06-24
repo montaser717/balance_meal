@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import '../UI/profile/profile_view.dart';
 import '../ui/diary/diary_view.dart';
 import '../ui/progress/progress_view.dart';
 
@@ -30,5 +31,15 @@ final GoRouter appRouter = GoRouter(
         ),
       ],
     ),
+
+    // Drawer-Routen:
+    GoRoute(
+      path: AppRoutes.profile,
+      builder: (context, state) => const ProfileView(),
+    ),
+   // GoRoute(
+   //   path: AppRoutes.settings,
+  //    builder: (context, state) => const SettingsView(),
+  //  ),
   ],
 );
