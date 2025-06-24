@@ -12,8 +12,7 @@ part of 'diary_state.dart';
 T _$identity<T>(T value) => value;
 
 final _privateConstructorUsedError = UnsupportedError(
-  'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models',
-);
+    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
 
 /// @nodoc
 mixin _$DiaryState {
@@ -31,9 +30,8 @@ mixin _$DiaryState {
 /// @nodoc
 abstract class $DiaryStateCopyWith<$Res> {
   factory $DiaryStateCopyWith(
-    DiaryState value,
-    $Res Function(DiaryState) then,
-  ) = _$DiaryStateCopyWithImpl<$Res, DiaryState>;
+          DiaryState value, $Res Function(DiaryState) then) =
+      _$DiaryStateCopyWithImpl<$Res, DiaryState>;
   @useResult
   $Res call({List<Meal> meals, bool isLoading, String? errorMessage});
 }
@@ -57,26 +55,20 @@ class _$DiaryStateCopyWithImpl<$Res, $Val extends DiaryState>
     Object? isLoading = null,
     Object? errorMessage = freezed,
   }) {
-    return _then(
-      _value.copyWith(
-            meals:
-                null == meals
-                    ? _value.meals
-                    : meals // ignore: cast_nullable_to_non_nullable
-                        as List<Meal>,
-            isLoading:
-                null == isLoading
-                    ? _value.isLoading
-                    : isLoading // ignore: cast_nullable_to_non_nullable
-                        as bool,
-            errorMessage:
-                freezed == errorMessage
-                    ? _value.errorMessage
-                    : errorMessage // ignore: cast_nullable_to_non_nullable
-                        as String?,
-          )
-          as $Val,
-    );
+    return _then(_value.copyWith(
+      meals: null == meals
+          ? _value.meals
+          : meals // ignore: cast_nullable_to_non_nullable
+              as List<Meal>,
+      isLoading: null == isLoading
+          ? _value.isLoading
+          : isLoading // ignore: cast_nullable_to_non_nullable
+              as bool,
+      errorMessage: freezed == errorMessage
+          ? _value.errorMessage
+          : errorMessage // ignore: cast_nullable_to_non_nullable
+              as String?,
+    ) as $Val);
   }
 }
 
@@ -84,9 +76,8 @@ class _$DiaryStateCopyWithImpl<$Res, $Val extends DiaryState>
 abstract class _$$DiaryStateImplCopyWith<$Res>
     implements $DiaryStateCopyWith<$Res> {
   factory _$$DiaryStateImplCopyWith(
-    _$DiaryStateImpl value,
-    $Res Function(_$DiaryStateImpl) then,
-  ) = __$$DiaryStateImplCopyWithImpl<$Res>;
+          _$DiaryStateImpl value, $Res Function(_$DiaryStateImpl) then) =
+      __$$DiaryStateImplCopyWithImpl<$Res>;
   @override
   @useResult
   $Res call({List<Meal> meals, bool isLoading, String? errorMessage});
@@ -97,9 +88,8 @@ class __$$DiaryStateImplCopyWithImpl<$Res>
     extends _$DiaryStateCopyWithImpl<$Res, _$DiaryStateImpl>
     implements _$$DiaryStateImplCopyWith<$Res> {
   __$$DiaryStateImplCopyWithImpl(
-    _$DiaryStateImpl _value,
-    $Res Function(_$DiaryStateImpl) _then,
-  ) : super(_value, _then);
+      _$DiaryStateImpl _value, $Res Function(_$DiaryStateImpl) _then)
+      : super(_value, _then);
 
   /// Create a copy of DiaryState
   /// with the given fields replaced by the non-null parameter values.
@@ -110,36 +100,31 @@ class __$$DiaryStateImplCopyWithImpl<$Res>
     Object? isLoading = null,
     Object? errorMessage = freezed,
   }) {
-    return _then(
-      _$DiaryStateImpl(
-        meals:
-            null == meals
-                ? _value._meals
-                : meals // ignore: cast_nullable_to_non_nullable
-                    as List<Meal>,
-        isLoading:
-            null == isLoading
-                ? _value.isLoading
-                : isLoading // ignore: cast_nullable_to_non_nullable
-                    as bool,
-        errorMessage:
-            freezed == errorMessage
-                ? _value.errorMessage
-                : errorMessage // ignore: cast_nullable_to_non_nullable
-                    as String?,
-      ),
-    );
+    return _then(_$DiaryStateImpl(
+      meals: null == meals
+          ? _value._meals
+          : meals // ignore: cast_nullable_to_non_nullable
+              as List<Meal>,
+      isLoading: null == isLoading
+          ? _value.isLoading
+          : isLoading // ignore: cast_nullable_to_non_nullable
+              as bool,
+      errorMessage: freezed == errorMessage
+          ? _value.errorMessage
+          : errorMessage // ignore: cast_nullable_to_non_nullable
+              as String?,
+    ));
   }
 }
 
 /// @nodoc
 
 class _$DiaryStateImpl implements _DiaryState {
-  const _$DiaryStateImpl({
-    final List<Meal> meals = const [],
-    this.isLoading = false,
-    this.errorMessage,
-  }) : _meals = meals;
+  const _$DiaryStateImpl(
+      {final List<Meal> meals = const [],
+      this.isLoading = false,
+      this.errorMessage})
+      : _meals = meals;
 
   final List<Meal> _meals;
   @override
@@ -174,12 +159,8 @@ class _$DiaryStateImpl implements _DiaryState {
   }
 
   @override
-  int get hashCode => Object.hash(
-    runtimeType,
-    const DeepCollectionEquality().hash(_meals),
-    isLoading,
-    errorMessage,
-  );
+  int get hashCode => Object.hash(runtimeType,
+      const DeepCollectionEquality().hash(_meals), isLoading, errorMessage);
 
   /// Create a copy of DiaryState
   /// with the given fields replaced by the non-null parameter values.
@@ -191,11 +172,10 @@ class _$DiaryStateImpl implements _DiaryState {
 }
 
 abstract class _DiaryState implements DiaryState {
-  const factory _DiaryState({
-    final List<Meal> meals,
-    final bool isLoading,
-    final String? errorMessage,
-  }) = _$DiaryStateImpl;
+  const factory _DiaryState(
+      {final List<Meal> meals,
+      final bool isLoading,
+      final String? errorMessage}) = _$DiaryStateImpl;
 
   @override
   List<Meal> get meals;
