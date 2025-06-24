@@ -1,11 +1,13 @@
+import 'package:balance_meal/services/fake_meal_service.dart';
+import 'package:balance_meal/services/hive_meal_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../bloc/diary/diary_cubit.dart';
 import '../../../bloc/diary/diary_state.dart';
 import '../../../models/meal.dart';
-import '../../../services/fake_meal_service.dart';
 import 'meal_card.dart';
-import 'nutrient_bar.dart';
+import 'meal_edit_view.dart';
+import 'nutrient_progress_bar.dart';
 
 class DiaryView extends StatelessWidget {
   const DiaryView({super.key});
@@ -17,6 +19,11 @@ class DiaryView extends StatelessWidget {
       child: BlocBuilder<DiaryCubit, DiaryState>(
         builder: (context, state) {
           final cubit = context.read<DiaryCubit>();
+
+          final totalCalories = state.meals.fold<int>(0, (sum, m) => sum + m.calories);
+          final totalProteins = state.meals.fold<int>(0, (sum, m) => sum + m.protein);
+          final totalFats = state.meals.fold<int>(0, (sum, m) => sum + m.fat);
+          final totalCarbs = state.meals.fold<int>(0, (sum, m) => sum + m.carbs);
 
           return SafeArea(
             child: Padding(
@@ -61,15 +68,13 @@ class DiaryView extends StatelessWidget {
                       children: [
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceAround,
-                          children: const [
-                            NutrientBar(label: "Proteine"),
-                            NutrientBar(label: "Fette"),
-                            NutrientBar(label: "Kohlenhydr"),
+                          children: [
+                            NutrientProgressBar(label: "Proteine", value: totalProteins, goal: 100, color: Colors.amber),
+                            NutrientProgressBar(label: "Fette", value: totalFats, goal: 70, color: Colors.deepPurple),
+                            NutrientProgressBar(label: "Kohlenhydr", value: totalCarbs, goal: 200, color: Colors.cyan),
                           ],
                         ),
-                        const SizedBox(height: 12),
-                        const Divider(color: Colors.grey, thickness: 2),
-                        const Text("Kalorien"),
+                        NutrientProgressBar(label: "Kalorien", value: totalCalories, goal: 2000, color: Colors.lightGreen),
                       ],
                     ),
                   ),
@@ -83,14 +88,14 @@ class DiaryView extends StatelessWidget {
                       const Text("Mahlzeiten", style: TextStyle(fontWeight: FontWeight.bold)),
                       IconButton(
                         icon: const Icon(Icons.add),
-                        onPressed: () {
-                          final meal = Meal(
-                            id: '',
-                            name: 'Neue Mahlzeit',
-                            calories: 300,
-                            date: DateTime.now(),
+                        onPressed: () async {
+                          final result = await Navigator.of(context).push<Meal>(
+                            MaterialPageRoute(builder: (_) => const MealEditView()),
                           );
-                          cubit.addMeal(meal);
+
+                          if (result != null) {
+                            cubit.addMeal(result); // wird gespeichert & Liste aktualisiert
+                          }
                         },
                       ),
                     ],
@@ -105,7 +110,20 @@ class DiaryView extends StatelessWidget {
                         final meal = state.meals[index];
                         return Column(
                           children: [
-                            MealCard(title: meal.name, calories: meal.calories),
+                            GestureDetector(
+                              onTap: () async {
+                                final updatedMeal = await Navigator.of(context).push<Meal>(
+                                  MaterialPageRoute(
+                                    builder: (_) => MealEditView(existingMeal: meal),
+                                  ),
+                                );
+
+                                if (updatedMeal != null) {
+                                  context.read<DiaryCubit>().updateMeal(updatedMeal);
+                                }
+                              },
+                              child: MealCard(title: meal.name, calories: meal.calories),
+                            ),
                             const SizedBox(height: 8),
                           ],
                         );
