@@ -17,6 +17,9 @@ dependencies:
   flutter:
     sdk: flutter
   go_router: ^12.1.1
+  hive: ^2.2.3
+  hive_flutter: ^1.1.0
+  path_provider: ^2.0.11
 
   cupertino_icons: ^1.0.8
 
@@ -26,6 +29,7 @@ dev_dependencies:
   json_serializable: ^6.7.1
   flutter_test:
     sdk: flutter
+  hive_generator: ^2.0.1
 
 
   flutter_lints: ^5.0.0

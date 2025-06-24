@@ -1,4 +1,5 @@
 import 'package:balance_meal/models/user_profile.dart';
+import 'package:balance_meal/services/hive_meal_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:uuid/uuid.dart';
@@ -10,23 +11,31 @@ import '../../../blocs/profile/profile_state.dart';
 import '../../../models/meal.dart';
 import '../../../services/fake_meal_service.dart';
 import '../meal/meal_detail_view.dart';
+
 import 'meal_card.dart';
-import 'nutrient_bar.dart';
+import 'meal_edit_view.dart';
+import 'nutrient_progress_bar.dart';
 
 class DiaryView extends StatelessWidget {
   const DiaryView({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<DiaryCubit, DiaryState>(
-      builder: (context, state) {
-
+    return BlocProvider(
+      create: (_) => DiaryCubit(HiveMealService())..loadMeals(),
+      child: BlocBuilder<DiaryCubit, DiaryState>(
+        builder: (context, state) {
           final cubit = context.read<DiaryCubit>();
 
-          final totalCalories = state.meals.fold(0.0, (sum, meal) => sum + meal.ingredients.fold(0.0, (s, i) => s + i.calories));
-          final totalProtein = state.meals.fold(0.0, (sum, meal) => sum + meal.ingredients.fold(0.0, (s, i) => s + i.protein));
-          final totalFat = state.meals.fold(0.0, (sum, meal) => sum + meal.ingredients.fold(0.0, (s, i) => s + i.fat));
-          final totalCarbs = state.meals.fold(0.0, (sum, meal) => sum + meal.ingredients.fold(0.0, (s, i) => s + i.carbs));
+          final totalCalories = state.meals.fold<int>(0, (sum, m) => sum + m.calories);
+          final totalProteins = state.meals.fold<int>(0, (sum, m) => sum + m.protein);
+          final totalFats = state.meals.fold<int>(0, (sum, m) => sum + m.fat);
+          final totalCarbs = state.meals.fold<int>(0, (sum, m) => sum + m.carbs);
+          
+          final totalCalories2 = state.meals.fold(0.0, (sum, meal) => sum + meal.ingredients.fold(0.0, (s, i) => s + i.calories));
+          final totalProtein2 = state.meals.fold(0.0, (sum, meal) => sum + meal.ingredients.fold(0.0, (s, i) => s + i.protein));
+          final totalFat2 = state.meals.fold(0.0, (sum, meal) => sum + meal.ingredients.fold(0.0, (s, i) => s + i.fat));
+          final totalCarbs2 = state.meals.fold(0.0, (sum, meal) => sum + meal.ingredients.fold(0.0, (s, i) => s + i.carbs));
 
           final profile = context.watch<ProfileCubit>().state.profile;
           final targetCalories = profile.dailyCalorieTarget;
@@ -64,13 +73,68 @@ class DiaryView extends StatelessWidget {
                     if (state.errorMessage != null)
                       Text("Fehler: ${state.errorMessage}", style: const TextStyle(color: Colors.red)),
 
-                    _NutrientBox(
-                      calories: totalCalories,
-                      protein: totalProtein,
-                      fat: totalFat,
-                      carbs: totalCarbs,
-                      progress: progress,
-                      targetCalories: targetCalories,
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          children: [
+                            NutrientProgressBar(label: "Proteine", value: totalProteins, goal: 100, color: Colors.amber),
+                            NutrientProgressBar(label: "Fette", value: totalFats, goal: 70, color: Colors.deepPurple),
+                            NutrientProgressBar(label: "Kohlenhydr", value: totalCarbs, goal: 200, color: Colors.cyan),
+                          ],
+                        ),
+                        NutrientProgressBar(label: "Kalorien", value: totalCalories, goal: 2000, color: Colors.lightGreen),
+                      ],
+                    ),
+                  ),
+
+                  const SizedBox(height: 24),
+
+                  // ✅ Mahlzeitenliste + Hinzufügen-Button
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      const Text("Mahlzeiten", style: TextStyle(fontWeight: FontWeight.bold)),
+                      IconButton(
+                        icon: const Icon(Icons.add),
+                        onPressed: () async {
+                          final result = await Navigator.of(context).push<Meal>(
+                            MaterialPageRoute(builder: (_) => const MealEditView()),
+                          );
+
+                          if (result != null) {
+                            cubit.addMeal(result); // wird gespeichert & Liste aktualisiert
+                          }
+                        },
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 12),
+
+                  // ✅ Liste der Mahlzeiten
+                  Expanded(
+                    child: ListView.builder(
+                      itemCount: state.meals.length,
+                      itemBuilder: (context, index) {
+                        final meal = state.meals[index];
+                        return Column(
+                          children: [
+                            GestureDetector(
+                              onTap: () async {
+                                final updatedMeal = await Navigator.of(context).push<Meal>(
+                                  MaterialPageRoute(
+                                    builder: (_) => MealEditView(existingMeal: meal),
+                                  ),
+                                );
+
+                                if (updatedMeal != null) {
+                                  context.read<DiaryCubit>().updateMeal(updatedMeal);
+                                }
+                              },
+                              child: MealCard(title: meal.name, calories: meal.calories),
+                            ),
+                            const SizedBox(height: 8),
+                          ],
+                        );
+                      },
                     ),
 
                     const SizedBox(height: 24),
