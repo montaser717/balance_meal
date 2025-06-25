@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:uuid/uuid.dart';
 
 import '../../models/food_item.dart';
@@ -17,6 +18,7 @@ class _MealEditViewState extends State<MealEditView> {
   final List<FoodItem> foodItems = [];
   late final TextEditingController nameController;
   final String mealId = const Uuid().v4();
+  final _formKey = GlobalKey<FormState>();
 
   int totalCalories = 0;
   int totalProteins = 0;
@@ -46,57 +48,109 @@ class _MealEditViewState extends State<MealEditView> {
     final protController = TextEditingController(text: existingItem?.protein.toString());
     final fatController = TextEditingController(text: existingItem?.fat.toString());
     final carbController = TextEditingController(text: existingItem?.carbs.toString());
+    final gramsController = TextEditingController(text: existingItem?.grams.toString());
 
     await showDialog(
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: Text(existingItem == null ? "Lebensmittel hinzufügen" : "Lebensmittel bearbeiten"),
-          content: SingleChildScrollView(
-            child: Column(
-              children: [
-                TextField(controller: nameController, decoration: const InputDecoration(labelText: "Name")),
-                TextField(controller: calController, decoration: const InputDecoration(labelText: "Kalorien"), keyboardType: TextInputType.number),
-                TextField(controller: protController, decoration: const InputDecoration(labelText: "Proteine (g)"), keyboardType: TextInputType.number),
-                TextField(controller: fatController, decoration: const InputDecoration(labelText: "Fette (g)"), keyboardType: TextInputType.number),
-                TextField(controller: carbController, decoration: const InputDecoration(labelText: "Kohlenhydrate (g)"), keyboardType: TextInputType.number),
-              ],
+          title: const Text("Zutat hinzufügen"),
+          content: Form(
+            key: _formKey,
+            child: SingleChildScrollView(
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(maxHeight: 400),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    _buildTextField("Name", nameController, isNumeric: false),
+                    const SizedBox(height: 12),
+                    Row(
+                      children: [
+                        Expanded(child: _buildTextField("Kalorien", calController)),
+                        const SizedBox(width: 8),
+                        Expanded(child: _buildTextField("Proteine", protController)),
+                      ],
+                    ),
+                    const SizedBox(height: 12),
+                    Row(
+                      children: [
+                        Expanded(child: _buildTextField("Fette", fatController)),
+                        const SizedBox(width: 8),
+                        Expanded(child: _buildTextField("Kohlenhydrate", carbController)),
+                      ],
+                    ),
+                    const SizedBox(height: 12),
+                    _buildTextField("Menge (g)", gramsController),
+                  ],
+                ),
+              ),
             ),
           ),
           actions: [
-            TextButton(onPressed: () => Navigator.of(context).pop(), child: const Text("Abbrechen")),
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text("Abbrechen"),
+            ),
             ElevatedButton(
               onPressed: () {
-                final newItem = FoodItem(
-                  name: nameController.text,
-                  calories: int.tryParse(calController.text) ?? 0,
-                  protein: int.tryParse(protController.text) ?? 0,
-                  fat: int.tryParse(fatController.text) ?? 0,
-                  carbs: int.tryParse(carbController.text) ?? 0,
-                  grams: 0,
-                );
-
-                setState(() {
-                  if (index != null) {
-                    foodItems[index] = newItem;
-                  } else {
-                    foodItems.add(newItem);
-                  }
-
-                  // neu berechnen
-                  totalCalories = foodItems.fold(0, (sum, item) => sum + item.calories);
-                  totalProteins = foodItems.fold(0, (sum, item) => sum + item.protein);
-                  totalFats = foodItems.fold(0, (sum, item) => sum + item.fat);
-                  totalCarbs = foodItems.fold(0, (sum, item) => sum + item.carbs);
-                });
-
-                Navigator.of(context).pop();
+                if (_formKey.currentState!.validate()) {
+                  final name = nameController.text.trim();
+                  final ing = FoodItem(
+                    name: name,
+                    calories: int.parse(calController.text),
+                    protein: int.parse(protController.text),
+                    fat: int.parse(fatController.text),
+                    carbs: int.parse(carbController.text),
+                    grams: int.parse(gramsController.text),
+                  );
+                  Navigator.pop(context, ing);
+                } else {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text("Bitte alle Felder korrekt ausfüllen")),
+                  );
+                }
               },
-              child: const Text("Speichern"),
+              child: const Text("OK"),
             ),
           ],
         );
       },
+    );
+  }
+
+  Widget _buildTextField(
+      String label,
+      TextEditingController controller, {
+        bool isNumeric = true,
+      }) {
+    return TextFormField(
+      controller: controller,
+      keyboardType: isNumeric
+          ? const TextInputType.numberWithOptions(decimal: true)
+          : TextInputType.text,
+      inputFormatters: isNumeric
+          ? [FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d{0,2}'))]
+          : null,
+      validator: (value) {
+        if (value == null || value.trim().isEmpty) {
+          return 'Pflichtfeld';
+        }
+        if (isNumeric && (double.tryParse(value) == null || double.parse(value) < 0)) {
+          return 'Ungültige Zahl';
+        }
+        return null;
+      },
+      decoration: InputDecoration(
+        labelText: label,
+        hintText: isNumeric ? "z. B. 100" : "z. B. Apfel",
+        filled: true,
+        fillColor: Colors.grey.shade100,
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(8),
+        ),
+        isDense: true,
+      ),
     );
   }
 
