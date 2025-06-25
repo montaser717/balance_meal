@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import '../UI/profile/profile_view.dart';
+import '../bloc/profile/profile_cubit.dart';
 
 class AppScaffold extends StatelessWidget {
   final StatefulNavigationShell navigationShell;
@@ -23,7 +25,14 @@ class AppScaffold extends StatelessWidget {
               title: const Text('Profil'),
               onTap: () {
                 Navigator.pop(context);
-                Navigator.push(context, MaterialPageRoute(builder: (_) => const ProfileView()));
+              //  Navigator.push(context, MaterialPageRoute(builder: (_) => const ProfileView()));
+                final result = Navigator.push<bool>(
+                  context,
+                  MaterialPageRoute(builder: (_) => const ProfileView()),
+                );
+                if (result == true) {
+                  context.read<ProfileCubit>().loadProfile(); // Falls du sicher neu laden willst
+                }
               },
             ),
             ListTile(

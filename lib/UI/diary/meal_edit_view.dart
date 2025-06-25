@@ -4,6 +4,7 @@ import 'package:uuid/uuid.dart';
 
 import '../../models/food_item.dart';
 import '../../models/meal.dart';
+import '../progress/calorie_chart.dart';
 
 class MealEditView extends StatefulWidget {
   final Meal? existingMeal;
@@ -28,11 +29,9 @@ class _MealEditViewState extends State<MealEditView> {
   @override
   void initState() {
     super.initState();
-
     nameController = TextEditingController(
       text: widget.existingMeal?.name ?? '',
     );
-
     if (widget.existingMeal != null) {
       totalCalories = widget.existingMeal!.calories;
       totalProteins = widget.existingMeal!.protein;
@@ -44,11 +43,21 @@ class _MealEditViewState extends State<MealEditView> {
 
   Future<void> showFoodItemDialog({FoodItem? existingItem, int? index}) async {
     final nameController = TextEditingController(text: existingItem?.name);
-    final calController = TextEditingController(text: existingItem?.calories.toString());
-    final protController = TextEditingController(text: existingItem?.protein.toString());
-    final fatController = TextEditingController(text: existingItem?.fat.toString());
-    final carbController = TextEditingController(text: existingItem?.carbs.toString());
-    final gramsController = TextEditingController(text: existingItem?.grams.toString());
+    final calController = TextEditingController(
+      text: existingItem?.calories.toString(),
+    );
+    final protController = TextEditingController(
+      text: existingItem?.protein.toString(),
+    );
+    final fatController = TextEditingController(
+      text: existingItem?.fat.toString(),
+    );
+    final carbController = TextEditingController(
+      text: existingItem?.carbs.toString(),
+    );
+    final gramsController = TextEditingController(
+      text: existingItem?.grams.toString(),
+    );
 
     await showDialog(
       context: context,
@@ -61,23 +70,34 @@ class _MealEditViewState extends State<MealEditView> {
               child: ConstrainedBox(
                 constraints: const BoxConstraints(maxHeight: 400),
                 child: Column(
-                  mainAxisSize: MainAxisSize.min,
                   children: [
                     _buildTextField("Name", nameController, isNumeric: false),
                     const SizedBox(height: 12),
+
                     Row(
                       children: [
-                        Expanded(child: _buildTextField("Kalorien", calController)),
+                        Expanded(
+                          child: _buildTextField("Kalorien", calController),
+                        ),
                         const SizedBox(width: 8),
-                        Expanded(child: _buildTextField("Proteine", protController)),
+                        Expanded(
+                          child: _buildTextField("Proteine", protController),
+                        ),
                       ],
                     ),
                     const SizedBox(height: 12),
                     Row(
                       children: [
-                        Expanded(child: _buildTextField("Fette", fatController)),
+                        Expanded(
+                          child: _buildTextField("Fette", fatController),
+                        ),
                         const SizedBox(width: 8),
-                        Expanded(child: _buildTextField("Kohlenhydrate", carbController)),
+                        Expanded(
+                          child: _buildTextField(
+                            "Kohlenhydrate",
+                            carbController,
+                          ),
+                        ),
                       ],
                     ),
                     const SizedBox(height: 12),
@@ -107,7 +127,9 @@ class _MealEditViewState extends State<MealEditView> {
                   Navigator.pop(context, ing);
                 } else {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text("Bitte alle Felder korrekt ausfüllen")),
+                    const SnackBar(
+                      content: Text("Bitte alle Felder korrekt ausfüllen"),
+                    ),
                   );
                 }
               },
@@ -116,104 +138,17 @@ class _MealEditViewState extends State<MealEditView> {
           ],
         );
       },
-    );
-  }
-
-  Widget _buildTextField(
-      String label,
-      TextEditingController controller, {
-        bool isNumeric = true,
-      }) {
-    return TextFormField(
-      controller: controller,
-      keyboardType: isNumeric
-          ? const TextInputType.numberWithOptions(decimal: true)
-          : TextInputType.text,
-      inputFormatters: isNumeric
-          ? [FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d{0,2}'))]
-          : null,
-      validator: (value) {
-        if (value == null || value.trim().isEmpty) {
-          return 'Pflichtfeld';
-        }
-        if (isNumeric && (double.tryParse(value) == null || double.parse(value) < 0)) {
-          return 'Ungültige Zahl';
-        }
-        return null;
-      },
-      decoration: InputDecoration(
-        labelText: label,
-        hintText: isNumeric ? "z. B. 100" : "z. B. Apfel",
-        filled: true,
-        fillColor: Colors.grey.shade100,
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(8),
-        ),
-        isDense: true,
-      ),
-    );
-  }
-
-
-  void addItemDialog() async {
-    final nameController = TextEditingController();
-    final calController = TextEditingController();
-    final protController = TextEditingController();
-    final fatController = TextEditingController();
-    final carbController = TextEditingController();
-    final gramController = TextEditingController();
-
-    await showDialog(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          title: const Text("Lebensmittel hinzufügen"),
-          content: SingleChildScrollView(
-            child: Column(
-              children: [
-                TextField(controller: nameController, decoration: const InputDecoration(labelText: "Name")),
-                TextField(controller: calController, decoration: const InputDecoration(labelText: "Kalorien"), keyboardType: TextInputType.number),
-                TextField(controller: protController, decoration: const InputDecoration(labelText: "Proteine (g)"), keyboardType: TextInputType.number),
-                TextField(controller: fatController, decoration: const InputDecoration(labelText: "Fette (g)"), keyboardType: TextInputType.number),
-                TextField(controller: carbController, decoration: const InputDecoration(labelText: "Kohlenhydrate (g)"), keyboardType: TextInputType.number),
-                TextField(controller: gramController, decoration: const InputDecoration(labelText: "Gewicht (g)"), keyboardType: TextInputType.number),
-              ],
-            ),
-          ),
-          actions: [
-            TextButton(onPressed: () => Navigator.of(context).pop(), child: const Text("Abbrechen")),
-            ElevatedButton(
-              onPressed: () {
-                final name = nameController.text;
-                final cal = int.tryParse(calController.text) ?? 0;
-                final prot = int.tryParse(protController.text) ?? 0;
-                final fat = int.tryParse(fatController.text) ?? 0;
-                final carb = int.tryParse(carbController.text) ?? 0;
-                final grams = int.tryParse(gramController.text) ?? 0;
-
-                setState(() {
-                  foodItems.add(FoodItem(
-                    name: name,
-                    calories: cal,
-                    protein: prot,
-                    fat: fat,
-                    carbs: carb,
-                    grams: grams,
-                  ));
-                  totalCalories += cal;
-                  totalProteins += prot;
-                  totalFats += fat;
-                  totalCarbs += carb;
-                });
-
-                Navigator.of(context).pop();
-              },
-              child: const Text("Hinzufügen"),
-            ),
-          ],
-        );
-      },
-    );
+    ).then((result) {
+      if (result != null && result is FoodItem) {
+        setState(() {
+          foodItems.add(result);
+          totalCalories += result.calories;
+          totalProteins += result.protein;
+          totalFats += result.fat;
+          totalCarbs += result.carbs;
+        });
+      }
+    });
   }
 
   void removeItem(int index) {
@@ -227,85 +162,194 @@ class _MealEditViewState extends State<MealEditView> {
     });
   }
 
+  Widget _buildTextField(
+    String label,
+    TextEditingController controller, {
+    bool isNumeric = true,
+  }) {
+    return TextFormField(
+      controller: controller,
+      keyboardType:
+          isNumeric
+              ? const TextInputType.numberWithOptions(decimal: true)
+              : TextInputType.text,
+      inputFormatters:
+          isNumeric
+              ? [FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d{0,2}'))]
+              : null,
+      validator: (value) {
+        if (value == null || value.trim().isEmpty) {
+          return 'Pflichtfeld';
+        }
+        if (isNumeric &&
+            (double.tryParse(value) == null || double.parse(value) < 0)) {
+          return 'Ungültige Zahl';
+        }
+        return null;
+      },
+      decoration: InputDecoration(
+        labelText: label,
+        hintText: isNumeric ? "z. B. 100" : "z. B. Apfel",
+        filled: true,
+        fillColor: Colors.grey.shade100,
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
+        isDense: true,
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: SizedBox(
-          height: 40,
-          child: TextField(
-            controller: nameController,
-            decoration: const InputDecoration(
-              hintText: "Mahlzeitname",
-              border: OutlineInputBorder(),
-              contentPadding: EdgeInsets.symmetric(horizontal: 8),
-            ),
-          ),
-        ),
+        title: const Text("Neue Mahlzeit"),
         leading: IconButton(
-          icon: const Icon(Icons.close),
+          icon: const Icon(Icons.arrow_back),
           onPressed: () => Navigator.of(context).pop(),
         ),
-        actions: [
-          IconButton(onPressed: showFoodItemDialog, icon: const Icon(Icons.add)),     // Popup aufrufen
-        ],
       ),
       body: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // 🔢 Nährwert-Zeile
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: [
-                _NutrientValue(label: "Kalorien", value: totalCalories),
-                _NutrientValue(label: "Proteine", value: totalProteins),
-                _NutrientValue(label: "Fette", value: totalFats),
-                _NutrientValue(label: "Kohlenhydr.", value: totalCarbs),
-              ],
+            TextFormField(
+              controller: nameController,
+              decoration: InputDecoration(
+                prefixIcon: const Icon(Icons.edit),
+                labelText: "Mahlzeitname",
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+              ),
             ),
             const SizedBox(height: 24),
 
-            // 🧾 Liste der Einträge
+            // Nährwerte
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                _NutrientBox(label: "Proteine", value: totalProteins),
+                _NutrientBox(label: "Fette", value: totalFats),
+                _NutrientBox(label: "Kohlenhydr", value: totalCarbs),
+              ],
+            ),
+            const SizedBox(height: 12),
+            Center(child: Text("${totalCalories.toStringAsFixed(1)} kcal")),
+
+            const SizedBox(height: 24),
+
+            // Zutatenliste mit Löschen
             Expanded(
               child: ListView.separated(
                 itemCount: foodItems.length,
                 separatorBuilder: (_, __) => const SizedBox(height: 12),
                 itemBuilder: (context, index) {
                   final item = foodItems[index];
+                  return Container(
+                    padding: const EdgeInsets.symmetric(
+                      vertical: 12,
+                      horizontal: 16,
+                    ),
+                    decoration: BoxDecoration(
+                      color: Colors.grey.shade100,
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Expanded(
+                          child: GestureDetector(
+                            onTap:
+                                () => showFoodItemDialog(
+                                  existingItem: item,
+                                  index: index,
+                                ),
+                            child: Text(item.name),
+                          ),
+                        ),
+                        Row(
+                          children: [
+                            Text(
+                              "${item.calories} kcal",
+                              style: const TextStyle(
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            const SizedBox(width: 8),
+                            IconButton(
+                              icon: const Icon(Icons.delete, color: Colors.red),
+                              onPressed: () async {
+                                final confirm = await showDialog<bool>(
+                                  context: context,
+                                  builder:
+                                      (context) => AlertDialog(
+                                        title: const Text("Zutat löschen"),
+                                        content: const Text(
+                                          "Willst du diese Zutat wirklich löschen?",
+                                        ),
+                                        actions: [
+                                          TextButton(
+                                            onPressed:
+                                                () => Navigator.of(
+                                                  context,
+                                                ).pop(false),
+                                            child: const Text("Abbrechen"),
+                                          ),
+                                          ElevatedButton(
+                                            onPressed:
+                                                () => Navigator.of(
+                                                  context,
+                                                ).pop(true),
+                                            child: const Text("Löschen"),
+                                          ),
+                                        ],
+                                      ),
+                                );
 
-                  return GestureDetector(
-                    onTap: () => showFoodItemDialog(existingItem: item, index: index),
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
-                      decoration: BoxDecoration(
-                        color: Colors.grey.shade100,
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(item.name),
-                          Text("${item.calories} kcal", style: const TextStyle(fontWeight: FontWeight.bold)),
-                        ],
-                      ),
+                                if (confirm == true) {
+                                  removeItem(index);
+                                }
+                              },
+                            ),
+                          ],
+                        ),
+                      ],
                     ),
                   );
                 },
               ),
             ),
 
-            const SizedBox(height: 24),
+            const SizedBox(height: 16),
 
-            // 💾 Speichern
+            // + Zutat hinzufügen
             SizedBox(
               width: double.infinity,
-              child: ElevatedButton(
+              child: ElevatedButton.icon(
+                onPressed: () => showFoodItemDialog(),
+                icon: const Icon(Icons.add),
+                label: const Text("Zutat hinzufügen"),
+                style: ElevatedButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(vertical: 14),
+                  backgroundColor: Colors.green.shade700,
+                  foregroundColor: Colors.white,
+                ),
+              ),
+            ),
+            const SizedBox(height: 8),
+
+            // Speichern
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton.icon(
                 onPressed: () {
                   final meal = Meal(
                     id: widget.existingMeal?.id ?? mealId,
-                    name: nameController.text.isEmpty ? 'Mahlzeit' : nameController.text,
+                    name:
+                        nameController.text.isEmpty
+                            ? 'Mahlzeit'
+                            : nameController.text,
                     calories: totalCalories,
                     protein: totalProteins,
                     fat: totalFats,
@@ -315,7 +359,13 @@ class _MealEditViewState extends State<MealEditView> {
                   );
                   Navigator.of(context).pop(meal);
                 },
-                child: const Text("Speichern"),
+                icon: const Icon(Icons.save),
+                label: const Text("Speichern"),
+                style: ElevatedButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(vertical: 14),
+                  backgroundColor: Colors.green.shade100,
+                  foregroundColor: Colors.black,
+                ),
               ),
             ),
           ],
@@ -325,25 +375,19 @@ class _MealEditViewState extends State<MealEditView> {
   }
 }
 
-class _NutrientValue extends StatelessWidget {
+class _NutrientBox extends StatelessWidget {
   final String label;
   final int value;
 
-  const _NutrientValue({
-    required this.label,
-    required this.value,
-  });
+  const _NutrientBox({required this.label, required this.value});
 
   @override
   Widget build(BuildContext context) {
     return Column(
       children: [
-        Text(
-          "$value",
-          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-        ),
+        Text(label, style: const TextStyle(fontWeight: FontWeight.bold)),
         const SizedBox(height: 4),
-        Text(label, style: const TextStyle(fontSize: 12)),
+        Text("$value g"),
       ],
     );
   }

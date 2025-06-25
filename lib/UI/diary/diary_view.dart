@@ -21,7 +21,8 @@ class DiaryView extends StatelessWidget {
       child: BlocBuilder<DiaryCubit, DiaryState>(
         builder: (context, state) {
           final cubit = context.read<DiaryCubit>();
-          final profile = context.read<ProfileCubit>().state.profile;
+          //final profile = context.read<ProfileCubit>().state.profile;
+          final profile = context.watch<ProfileCubit>().state.profile;
 
           final totalCalories = state.meals.fold<int>(
             0,
@@ -134,7 +135,7 @@ class DiaryView extends StatelessWidget {
                               NutrientProgressBar(
                                 label: "Kohlenhydr",
                                 value: totalCarbs,
-                                goal: profile.carbGoal,
+                                goal: profile.carbGoal?.clamp(200, 10000) ?? 70,
                                 color: Colors.cyan,
                               ),
                             ],
@@ -182,28 +183,63 @@ class DiaryView extends StatelessWidget {
                         final meal = state.meals[index];
                         return Column(
                           children: [
-                            GestureDetector(
-                              onTap: () async {
-                                final updatedMeal = await Navigator.of(
-                                  context,
-                                ).push<Meal>(
-                                  MaterialPageRoute(
-                                    builder:
-                                        (_) => MealEditView(existingMeal: meal),
-                                  ),
-                                );
+                            Container(
+                              decoration: BoxDecoration(
+                                color: Colors.grey.shade100,
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Expanded(
+                                    child: GestureDetector(
+                                      onTap: () async {
+                                        final updatedMeal = await Navigator.of(context).push<Meal>(
+                                          MaterialPageRoute(
+                                            builder: (_) => MealEditView(existingMeal: meal),
+                                          ),
+                                        );
 
-                                if (updatedMeal != null) {
-                                  context.read<DiaryCubit>().updateMeal(
-                                    updatedMeal,
-                                  );
-                                }
-                              },
-                              child: MealCard(
-                                title: meal.name,
-                                calories: meal.calories,
+                                        if (updatedMeal != null) {
+                                          context.read<DiaryCubit>().updateMeal(updatedMeal);
+                                        }
+                                      },
+                                      child: MealCard(
+                                        title: meal.name,
+                                        calories: meal.calories,
+                                      ),
+                                    ),
+                                  ),
+                                  IconButton(
+                                    icon: const Icon(Icons.delete, color: Colors.red),
+                                    onPressed: () async {
+                                      final confirm = await showDialog<bool>(
+                                        context: context,
+                                        builder: (context) => AlertDialog(
+                                          title: const Text("Mahlzeit löschen"),
+                                          content: const Text("Willst du diese Mahlzeit wirklich löschen?"),
+                                          actions: [
+                                            TextButton(
+                                              onPressed: () => Navigator.of(context).pop(false),
+                                              child: const Text("Abbrechen"),
+                                            ),
+                                            ElevatedButton(
+                                              onPressed: () => Navigator.of(context).pop(true),
+                                              child: const Text("Löschen"),
+                                            ),
+                                          ],
+                                        ),
+                                      );
+
+                                      if (confirm == true) {
+                                        context.read<DiaryCubit>().deleteMeal(meal.id);
+                                      }
+                                    },
+                                  ),
+                                ],
                               ),
                             ),
+
                             const SizedBox(height: 8),
                           ],
                         );

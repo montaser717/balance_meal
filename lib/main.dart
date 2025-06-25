@@ -11,11 +11,15 @@ import 'bloc/diary/diary_cubit.dart';
 import 'bloc/profile/profile_cubit.dart';
 import 'common/app_theme.dart';
 import 'models/meal.dart';
+import 'models/weight_entry.dart';
+import 'package:intl/intl.dart';
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   final appDocDir = await getApplicationDocumentsDirectory();
   Hive.init(appDocDir.path);
-
+  Hive.registerAdapter(WeightEntryAdapter());
+  await Hive.openBox<WeightEntry>('weightBox');
   Hive.registerAdapter(MealAdapter());
   Hive.registerAdapter(FoodItemAdapter());
   Hive.registerAdapter(UserProfileAdapter());

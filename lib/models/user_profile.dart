@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:hive/hive.dart';
 
 part 'user_profile.g.dart';
@@ -83,7 +85,7 @@ extension UserProfileCalculations on UserProfile {
   int get fatGoal => (weight * 1).round(); // 1g Fett pro kg
   int get carbGoal {
     final kcalRest = calorieGoal - (proteinGoal * 4 + fatGoal * 9);
-    return (kcalRest / 4).round(); // 4 kcal/g Kohlenhydrate
+    return max((kcalRest / 4).round(), 0); // Nie weniger als 0 g
   }
 }
 
