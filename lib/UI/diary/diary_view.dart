@@ -1,10 +1,12 @@
 import 'package:balance_meal/UI/diary/calories_circle_indicator.dart';
+import 'package:balance_meal/models/user_profile.dart';
 import 'package:balance_meal/services/hive_meal_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../bloc/diary/diary_cubit.dart';
 import '../../../bloc/diary/diary_state.dart';
 import '../../../models/meal.dart';
+import '../../bloc/profile/profile_cubit.dart';
 import 'meal_card.dart';
 import 'meal_edit_view.dart';
 import 'nutrient_progress_bar.dart';
@@ -19,6 +21,7 @@ class DiaryView extends StatelessWidget {
       child: BlocBuilder<DiaryCubit, DiaryState>(
         builder: (context, state) {
           final cubit = context.read<DiaryCubit>();
+          final profile = context.read<ProfileCubit>().state.profile;
 
           final totalCalories = state.meals.fold<int>(
             0,
@@ -41,16 +44,22 @@ class DiaryView extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text(
-                      "Tagebuch",
-                      style: TextStyle(
-                        fontSize: 22,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
                     const SizedBox(height: 12),
 
                     // userprofile
+                    Row(
+                      children: [
+                        Builder(
+                          builder: (context) => IconButton(
+                            icon: const Icon(Icons.menu),
+                            onPressed: () => Scaffold.of(context).openDrawer(),
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        const Text("Tagebuch", style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500)),
+                      ],
+                    ),
+                    /*
                     const Row(
                       children: [
                         CircleAvatar(
@@ -68,6 +77,7 @@ class DiaryView extends StatelessWidget {
                         ),
                       ],
                     ),
+                    */
                     const SizedBox(height: 24),
 
                     if (state.isLoading)
@@ -102,7 +112,7 @@ class DiaryView extends StatelessWidget {
                           CaloriesCircleIndicator(
                             label: "Kalorien",
                             value: totalCalories,
-                            goal: 2000,
+                            goal: profile.calorieGoal,
                             color: Colors.lightGreen,
                           ),
                           const SizedBox(height: 16),
@@ -112,19 +122,19 @@ class DiaryView extends StatelessWidget {
                               NutrientProgressBar(
                                 label: "Proteine",
                                 value: totalProteins,
-                                goal: 100,
+                                goal: profile.proteinGoal,
                                 color: Colors.amber,
                               ),
                               NutrientProgressBar(
                                 label: "Fette",
                                 value: totalFats,
-                                goal: 70,
+                                goal: profile.fatGoal,
                                 color: Colors.deepPurple,
                               ),
                               NutrientProgressBar(
                                 label: "Kohlenhydr",
                                 value: totalCarbs,
-                                goal: 200,
+                                goal: profile.carbGoal,
                                 color: Colors.cyan,
                               ),
                             ],
