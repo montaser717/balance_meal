@@ -1,137 +1,221 @@
+import 'package:balance_meal/UI/diary/calories_circle_indicator.dart';
+import 'package:balance_meal/models/user_profile.dart';
+import 'package:balance_meal/services/hive_meal_service.dart';
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../../bloc/diary/diary_cubit.dart';
+import '../../../bloc/diary/diary_state.dart';
+import '../../../models/meal.dart';
+import '../../bloc/profile/profile_cubit.dart';
+import 'meal_card.dart';
+import 'meal_edit_view.dart';
+import 'nutrient_progress_bar.dart';
 
 class DiaryView extends StatelessWidget {
   const DiaryView({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Row(
-                children: [
-                  CircleAvatar(radius: 24, child: Icon(Icons.person)),
-                  SizedBox(width: 12),
-                  Text("Name", style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500)),
-                ],
-              ),
-              const SizedBox(height: 24),
+    return BlocProvider(
+      create: (_) => DiaryCubit(HiveMealService())..loadMeals(),
+      child: BlocBuilder<DiaryCubit, DiaryState>(
+        builder: (context, state) {
+          final cubit = context.read<DiaryCubit>();
+          final profile = context.read<ProfileCubit>().state.profile;
 
-              const Text("Nährstoffe", style: TextStyle(fontWeight: FontWeight.bold)),
-              const SizedBox(height: 8),
-              Container(
-                padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
-                decoration: BoxDecoration(
-                  color: Colors.grey.shade100,
-                  borderRadius: BorderRadius.circular(12),
-                ),
+          final totalCalories = state.meals.fold<int>(
+            0,
+            (sum, m) => sum + m.calories,
+          );
+          final totalProteins = state.meals.fold<int>(
+            0,
+            (sum, m) => sum + m.protein,
+          );
+          final totalFats = state.meals.fold<int>(0, (sum, m) => sum + m.fat);
+          final totalCarbs = state.meals.fold<int>(
+            0,
+            (sum, m) => sum + m.carbs,
+          );
+
+          return SafeArea(
+            child: Padding(
+              padding: const EdgeInsets.all(16),
+              child: SingleChildScrollView(
                 child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    const SizedBox(height: 12),
+
+                    // userprofile
                     Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
                       children: [
-                        _NutrientBar(label: "Proteine"),
-                        _NutrientBar(label: "Fette"),
-                        _NutrientBar(label: "Kohlenhydr"),
+                        Builder(
+                          builder: (context) => IconButton(
+                            icon: const Icon(Icons.menu),
+                            onPressed: () => Scaffold.of(context).openDrawer(),
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        const Text("Tagebuch", style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500)),
+                      ],
+                    ),
+                    /*
+                    const Row(
+                      children: [
+                        CircleAvatar(
+                          radius: 24,
+                          backgroundColor: Colors.green,
+                          child: Icon(Icons.person, color: Colors.white),
+                        ),
+                        SizedBox(width: 12),
+                        Text(
+                          "Name",
+                          style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ],
+                    ),
+                    */
+                    const SizedBox(height: 24),
+
+                    if (state.isLoading)
+                      const Center(child: CircularProgressIndicator()),
+
+                    if (state.errorMessage != null)
+                      Text(
+                        "Fehler: ${state.errorMessage}",
+                        style: const TextStyle(color: Colors.red),
+                      ),
+
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        vertical: 12,
+                        horizontal: 16,
+                      ),
+                      decoration: BoxDecoration(
+                        color: Colors.grey.shade100,
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Column(
+                        children: [
+                          Row(
+                            children: [
+                              const Text(
+                                "Nährstoffe",
+                                style: TextStyle(fontWeight: FontWeight.bold),
+                              ),
+                            ],
+                          ),
+
+                          CaloriesCircleIndicator(
+                            label: "Kalorien",
+                            value: totalCalories,
+                            goal: profile.calorieGoal,
+                            color: Colors.lightGreen,
+                          ),
+                          const SizedBox(height: 16),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceAround,
+                            children: [
+                              NutrientProgressBar(
+                                label: "Proteine",
+                                value: totalProteins,
+                                goal: profile.proteinGoal,
+                                color: Colors.amber,
+                              ),
+                              NutrientProgressBar(
+                                label: "Fette",
+                                value: totalFats,
+                                goal: profile.fatGoal,
+                                color: Colors.deepPurple,
+                              ),
+                              NutrientProgressBar(
+                                label: "Kohlenhydr",
+                                value: totalCarbs,
+                                goal: profile.carbGoal,
+                                color: Colors.cyan,
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+
+                    const SizedBox(height: 24),
+
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        const Text(
+                          "Mahlzeiten",
+                          style: TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                        IconButton(
+                          icon: const Icon(Icons.add),
+                          onPressed: () async {
+                            final result = await Navigator.of(
+                              context,
+                            ).push<Meal>(
+                              MaterialPageRoute(
+                                builder: (_) => const MealEditView(),
+                              ),
+                            );
+
+                            if (result != null) {
+                              cubit.addMeal(
+                                result,
+                              ); // wird gespeichert & Liste aktualisiert
+                            }
+                          },
+                        ),
                       ],
                     ),
                     const SizedBox(height: 12),
-                    const Divider(color: Colors.grey, thickness: 2),
-                    const Text("Kalorien"),
+
+                    ListView.builder(
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      itemCount: state.meals.length,
+                      itemBuilder: (context, index) {
+                        final meal = state.meals[index];
+                        return Column(
+                          children: [
+                            GestureDetector(
+                              onTap: () async {
+                                final updatedMeal = await Navigator.of(
+                                  context,
+                                ).push<Meal>(
+                                  MaterialPageRoute(
+                                    builder:
+                                        (_) => MealEditView(existingMeal: meal),
+                                  ),
+                                );
+
+                                if (updatedMeal != null) {
+                                  context.read<DiaryCubit>().updateMeal(
+                                    updatedMeal,
+                                  );
+                                }
+                              },
+                              child: MealCard(
+                                title: meal.name,
+                                calories: meal.calories,
+                              ),
+                            ),
+                            const SizedBox(height: 8),
+                          ],
+                        );
+                      },
+                    ),
                   ],
                 ),
               ),
-
-              const SizedBox(height: 24),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: const [
-                  Text("Mahlzeiten", style: TextStyle(fontWeight: FontWeight.bold)),
-                  Icon(Icons.add),
-                ],
-              ),
-              const SizedBox(height: 12),
-
-              Expanded(
-                child: ListView(
-                  children: const [
-                    _MealCard(title: "Frühstück", calories: 531),
-                    SizedBox(height: 8),
-                    _MealCard(title: "Mittagessen", calories: 1024),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: 0,
-        onTap: (index) {
-          if (index == 1) context.go('/progress');
+            ),
+          );
         },
-        items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.book), label: 'Tagebuch'),
-          BottomNavigationBarItem(icon: Icon(Icons.bar_chart), label: 'Fortschritt'),
-        ],
       ),
-    );
-  }
-}
-
-class _MealCard extends StatelessWidget {
-  final String title;
-  final int calories;
-
-  const _MealCard({required this.title, required this.calories});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
-      decoration: BoxDecoration(
-        color: Colors.grey.shade100,
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text(title),
-          Text(
-            "$calories Cal",
-            style: const TextStyle(fontWeight: FontWeight.bold),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _NutrientBar extends StatelessWidget {
-  final String label;
-
-  const _NutrientBar({required this.label});
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Container(
-          width: 50,
-          height: 6,
-          decoration: BoxDecoration(
-            color: Colors.grey,
-            borderRadius: BorderRadius.circular(3),
-          ),
-        ),
-        const SizedBox(height: 6),
-        Text(label),
-      ],
     );
   }
 }
