@@ -117,7 +117,7 @@ class DiaryView extends StatelessWidget {
                               NutrientProgressBar(
                                 label: "Kohlenhydr",
                                 value: totalCarbs,
-                                goal: profile.carbGoal.clamp(200, 10000) ?? 70,
+                                goal: profile.carbGoal.clamp(200, 10000),
                                 color: Colors.cyan,
                               ),
                             ],
