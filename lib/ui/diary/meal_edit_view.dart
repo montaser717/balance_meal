@@ -354,31 +354,34 @@ class _MealEditViewState extends State<MealEditView> {
             const SizedBox(height: AppTheme.spacing / 2),
 
             // Speichern
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton.icon(
-                onPressed: () {
-                  final meal = Meal(
-                    id: widget.existingMeal?.id ?? mealId,
-                    name:
-                        nameController.text.isEmpty
-                            ? 'Mahlzeit'
-                            : nameController.text,
-                    calories: totalCalories,
-                    protein: totalProteins,
-                    fat: totalFats,
-                    carbs: totalCarbs,
-                    date: DateTime.now(),
-                    items: foodItems,
-                  );
-                  Navigator.of(context).pop(meal);
-                },
-                icon: const Icon(Icons.save),
-                label: Text(AppStrings.save),
-                style: ElevatedButton.styleFrom(
-                  padding: const EdgeInsets.symmetric(vertical: 14),
-                  backgroundColor: AppTheme.primaryLight,
-                  foregroundColor: AppTheme.textPrimary,
+            Padding(
+              padding: const EdgeInsets.only(bottom: AppTheme.spacing * 5),
+              child: SizedBox(
+                width: double.infinity,
+                child: ElevatedButton.icon(
+                  onPressed: () {
+                    final meal = Meal(
+                      id: widget.existingMeal?.id ?? mealId,
+                      name:
+                          nameController.text.isEmpty
+                              ? 'Mahlzeit'
+                              : nameController.text,
+                      calories: totalCalories,
+                      protein: totalProteins,
+                      fat: totalFats,
+                      carbs: totalCarbs,
+                      date: DateTime.now(),
+                      items: foodItems,
+                    );
+                    Navigator.of(context).pop(meal);
+                  },
+                  icon: const Icon(Icons.save),
+                  label: Text(AppStrings.save),
+                  style: ElevatedButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(vertical: 14),
+                    backgroundColor: AppTheme.primaryLight,
+                    foregroundColor: AppTheme.textPrimary,
+                  ),
                 ),
               ),
             ),
