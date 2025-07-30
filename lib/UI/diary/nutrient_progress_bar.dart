@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:balance_meal/common/app_theme.dart';
 
 class NutrientProgressBar extends StatelessWidget {
   final String label;
@@ -23,7 +24,7 @@ class NutrientProgressBar extends StatelessWidget {
         Stack(
           children: [
             Container(
-              width: 70,
+              width: MediaQuery.of(context).size.width * 0.18,
               height: 6,
               decoration: BoxDecoration(
                 color: Colors.grey.shade300,
@@ -31,7 +32,7 @@ class NutrientProgressBar extends StatelessWidget {
               ),
             ),
             Container(
-              width: 70 * percentage,
+              width: MediaQuery.of(context).size.width * 0.18 * percentage,
               height: 6,
               decoration: BoxDecoration(
                 color: color,

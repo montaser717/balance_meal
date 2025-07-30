@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:balance_meal/common/app_theme.dart';
 
 class MealCard extends StatelessWidget {
   final String title;
@@ -9,9 +10,9 @@ class MealCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
+      padding: const EdgeInsets.all(AppTheme.spacing),
       decoration: BoxDecoration(
-        color: Colors.grey.shade100,
+        color: AppTheme.cardColor,
         borderRadius: BorderRadius.circular(12),
       ),
       child: Row(
