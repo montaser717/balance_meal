@@ -6,6 +6,17 @@ class AppTheme {
   static final Color background = const Color(0xFFF9F9F9);
   static final Color textPrimary = const Color(0xFF222222);
   static final Color textSecondary = const Color(0xFF888888);
+  static final Color cardColor = Colors.grey.shade100;
+  static final Color errorColor = Colors.redAccent;
+  static final Color primaryDark = Colors.green.shade700;
+  static final Color primaryLight = Colors.green.shade100;
+
+  static const double spacing = 16.0;
+
+  static const TextStyle pageTitle =
+      TextStyle(fontSize: 20, fontWeight: FontWeight.w500);
+  static const TextStyle sectionTitle =
+      TextStyle(fontWeight: FontWeight.bold);
 
   static ThemeData lightTheme = ThemeData(
     useMaterial3: true,
@@ -26,6 +37,14 @@ class AppTheme {
     ),
     textTheme: const TextTheme(
       bodyMedium: TextStyle(color: Color(0xFF222222)),
+    ),
+  );
+
+  static ThemeData darkTheme = ThemeData(
+    useMaterial3: true,
+    colorScheme: ColorScheme.fromSeed(
+      seedColor: primary,
+      brightness: Brightness.dark,
     ),
   );
 }

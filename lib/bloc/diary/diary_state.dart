@@ -1,5 +1,5 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
-import '../../models/meal.dart';
+import 'package:balance_meal/models/meal.dart';
 
 part 'diary_state.freezed.dart';
 

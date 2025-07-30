@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
+import 'package:balance_meal/common/app_theme.dart';
+import 'package:balance_meal/common/app_strings.dart';
 
 class CaloriesCircleIndicator extends StatelessWidget {
   final String label;
@@ -41,7 +43,7 @@ class CaloriesCircleIndicator extends StatelessWidget {
               alignment: Alignment.center,
               children: [
                 CircularPercentIndicator(
-                  radius: 60,
+                  radius: MediaQuery.of(context).size.width * 0.15,
                   lineWidth: 12.0,
                   percent: percent,
                   progressColor: color,
@@ -75,7 +77,8 @@ class CaloriesCircleIndicator extends StatelessWidget {
             const Spacer(),
           ],
         ),
-        Text("Kalorien", style: const TextStyle(fontWeight: FontWeight.bold)),
+        Text(AppStrings.calories,
+            style: AppTheme.sectionTitle),
       ],
     );
   }

@@ -1,15 +1,19 @@
-import 'package:balance_meal/UI/diary/calories_circle_indicator.dart';
+import 'package:balance_meal/ui/diary/calories_circle_indicator.dart';
 import 'package:balance_meal/models/user_profile.dart';
 import 'package:balance_meal/services/hive_meal_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../../bloc/diary/diary_cubit.dart';
-import '../../../bloc/diary/diary_state.dart';
-import '../../../models/meal.dart';
-import '../../bloc/profile/profile_cubit.dart';
+import 'package:balance_meal/bloc/diary/diary_cubit.dart';
+import 'package:balance_meal/bloc/diary/diary_state.dart';
+import 'package:balance_meal/models/meal.dart';
+import 'package:balance_meal/bloc/profile/profile_cubit.dart';
+import 'package:go_router/go_router.dart';
+import '../../common/app_routes.dart';
 import 'meal_card.dart';
-import 'meal_edit_view.dart';
+import 'package:balance_meal/router/app_router.dart';
 import 'nutrient_progress_bar.dart';
+import 'package:balance_meal/common/app_theme.dart';
+import 'package:balance_meal/common/app_strings.dart';
 
 class DiaryView extends StatelessWidget {
   const DiaryView({super.key});
@@ -21,7 +25,8 @@ class DiaryView extends StatelessWidget {
       child: BlocBuilder<DiaryCubit, DiaryState>(
         builder: (context, state) {
           final cubit = context.read<DiaryCubit>();
-          final profile = context.read<ProfileCubit>().state.profile;
+          final profileState = context.watch<ProfileCubit>().state;
+          final profile = profileState.profile;
 
           final totalCalories = state.meals.fold<int>(
             0,
@@ -44,78 +49,57 @@ class DiaryView extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const SizedBox(height: 12),
 
-                    // userprofile
-                    Row(
-                      children: [
-                        Builder(
-                          builder: (context) => IconButton(
-                            icon: const Icon(Icons.menu),
-                            onPressed: () => Scaffold.of(context).openDrawer(),
-                          ),
-                        ),
-                        const SizedBox(width: 8),
-                        const Text("Tagebuch", style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500)),
-                      ],
-                    ),
-                    /*
-                    const Row(
-                      children: [
-                        CircleAvatar(
-                          radius: 24,
-                          backgroundColor: Colors.green,
-                          child: Icon(Icons.person, color: Colors.white),
-                        ),
-                        SizedBox(width: 12),
-                        Text(
-                          "Name",
-                          style: TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                      ],
-                    ),
-                    */
-                    const SizedBox(height: 24),
+                    Text(AppStrings.diary, style: AppTheme.pageTitle),
+
+                    const SizedBox(height: AppTheme.spacing * 1.5),
 
                     if (state.isLoading)
                       const Center(child: CircularProgressIndicator()),
 
                     if (state.errorMessage != null)
                       Text(
-                        "Fehler: ${state.errorMessage}",
-                        style: const TextStyle(color: Colors.red),
+                        "${AppStrings.error}: ${state.errorMessage}",
+                        style: TextStyle(color: AppTheme.errorColor),
                       ),
 
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                        vertical: 12,
-                        horizontal: 16,
+                    if (profileState.errorMessage != null)
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: 16),
+                        child: Text(
+                          AppStrings.addProfilePrompt,
+                          style: TextStyle(color: AppTheme.errorColor),
+                        ),
                       ),
+
+                    if (profileState.errorMessage == null)
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          vertical: 12,
+                          horizontal: AppTheme.spacing,
+                        ),
                       decoration: BoxDecoration(
-                        color: Colors.grey.shade100,
+                        color: AppTheme.cardColor,
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: Column(
                         children: [
                           Row(
                             children: [
-                              const Text(
-                                "Nährstoffe",
-                                style: TextStyle(fontWeight: FontWeight.bold),
+                              Text(
+                                AppStrings.nutrients,
+                                style: AppTheme.sectionTitle,
                               ),
                             ],
                           ),
 
                           CaloriesCircleIndicator(
-                            label: "Kalorien",
+                            label: AppStrings.calories,
                             value: totalCalories,
                             goal: profile.calorieGoal,
-                            color: Colors.lightGreen,
+                            color: AppTheme.primaryLight,
                           ),
-                          const SizedBox(height: 16),
+                          const SizedBox(height: AppTheme.spacing),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceAround,
                             children: [
@@ -134,7 +118,7 @@ class DiaryView extends StatelessWidget {
                               NutrientProgressBar(
                                 label: "Kohlenhydr",
                                 value: totalCarbs,
-                                goal: profile.carbGoal,
+                                goal: profile.carbGoal?.clamp(200, 10000) ?? 70,
                                 color: Colors.cyan,
                               ),
                             ],
@@ -143,25 +127,21 @@ class DiaryView extends StatelessWidget {
                       ),
                     ),
 
-                    const SizedBox(height: 24),
+                    const SizedBox(height: AppTheme.spacing * 1.5),
 
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        const Text(
-                          "Mahlzeiten",
-                          style: TextStyle(fontWeight: FontWeight.bold),
+                        Text(
+                          AppStrings.meals,
+                          style: AppTheme.sectionTitle,
                         ),
                         IconButton(
                           icon: const Icon(Icons.add),
-                          onPressed: () async {
-                            final result = await Navigator.of(
-                              context,
-                            ).push<Meal>(
-                              MaterialPageRoute(
-                                builder: (_) => const MealEditView(),
-                              ),
-                            );
+                          onPressed: ()
+                          async {
+                            final result =
+                              await context.push<Meal>(AppRoutes.mealEdit);
 
                             if (result != null) {
                               cubit.addMeal(
@@ -182,28 +162,62 @@ class DiaryView extends StatelessWidget {
                         final meal = state.meals[index];
                         return Column(
                           children: [
-                            GestureDetector(
-                              onTap: () async {
-                                final updatedMeal = await Navigator.of(
-                                  context,
-                                ).push<Meal>(
-                                  MaterialPageRoute(
-                                    builder:
-                                        (_) => MealEditView(existingMeal: meal),
-                                  ),
-                                );
+                            Container(
+                              decoration: BoxDecoration(
+                                color: AppTheme.cardColor,
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Expanded(
+                                    child: GestureDetector(
+                                      onTap: () async {
+                                        final updatedMeal = await context.push<Meal>(
+                                          AppRoutes.mealEdit,
+                                          extra: meal,
+                                        );
 
-                                if (updatedMeal != null) {
-                                  context.read<DiaryCubit>().updateMeal(
-                                    updatedMeal,
-                                  );
-                                }
-                              },
-                              child: MealCard(
-                                title: meal.name,
-                                calories: meal.calories,
+                                        if (updatedMeal != null) {
+                                          context.read<DiaryCubit>().updateMeal(updatedMeal);
+                                        }
+                                      },
+                                      child: MealCard(
+                                        title: meal.name,
+                                        calories: meal.calories,
+                                      ),
+                                    ),
+                                  ),
+                                  IconButton(
+                                    icon: Icon(Icons.delete, color: AppTheme.errorColor),
+                                    onPressed: () async {
+                                      final confirm = await showDialog<bool>(
+                                        context: context,
+                                        builder: (context) => AlertDialog(
+                                          title: Text(AppStrings.deleteMeal),
+                                          content: Text(AppStrings.confirmDeleteMeal),
+                                          actions: [
+                                            TextButton(
+                                              onPressed: () => Navigator.of(context).pop(false),
+                                              child: Text(AppStrings.cancel),
+                                            ),
+                                            ElevatedButton(
+                                              onPressed: () => Navigator.of(context).pop(true),
+                                              child: Text(AppStrings.delete),
+                                            ),
+                                          ],
+                                        ),
+                                      );
+
+                                      if (confirm == true) {
+                                        context.read<DiaryCubit>().deleteMeal(meal.id);
+                                      }
+                                    },
+                                  ),
+                                ],
                               ),
                             ),
+
                             const SizedBox(height: 8),
                           ],
                         );
