@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
+import 'package:balance_meal/common/app_strings.dart';
+import 'package:balance_meal/common/app_theme.dart';
+import 'package:balance_meal/common/app_routes.dart';
 
-import '../../bloc/profile/profile_cubit.dart';
-import '../../models/user_profile.dart';
+import 'package:balance_meal/bloc/profile/profile_cubit.dart';
+import 'package:balance_meal/models/user_profile.dart';
 
 class ProfileView extends StatefulWidget {
   const ProfileView({super.key});
@@ -20,16 +24,23 @@ class _ProfileViewState extends State<ProfileView> {
     final cubit = context.read<ProfileCubit>();
 
     cubit.loadProfile().then((_) {
-      final profile = cubit.state.profile;
-      setState(() {
-        nameController.text = profile.name;
-        ageController.text = profile.age.toString();
-        heightController.text = profile.height.toString();
-        weightController.text = profile.weight.toString();
-        selectedGender = profile.gender;
-        selectedActivity = profile.activityLevel;
-        selectedGoal = profile.goal;
-      });
+      final state = cubit.state;
+      if (state.errorMessage == null) {
+        final profile = state.profile;
+        setState(() {
+          nameController.text = profile.name;
+          ageController.text = profile.age.toString();
+          heightController.text = profile.height.toString();
+          weightController.text = profile.weight.toString();
+          selectedGender = profile.gender;
+          selectedActivity = profile.activityLevel;
+          selectedGoal = profile.goal;
+        });
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(state.errorMessage!)),
+        );
+      }
     });
   }
 
@@ -49,18 +60,18 @@ class _ProfileViewState extends State<ProfileView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("Profil")),
+      appBar: AppBar(title: Text(AppStrings.profile)),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.all(AppTheme.spacing),
         child: Form(
           key: _formKey,
           child: Column(
             children: [
               Card(
-                margin: const EdgeInsets.only(bottom: 24),
+                margin: const EdgeInsets.only(bottom: AppTheme.spacing * 1.5),
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                 child: Padding(
-                  padding: const EdgeInsets.all(16),
+                  padding: const EdgeInsets.all(AppTheme.spacing),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -128,7 +139,7 @@ class _ProfileViewState extends State<ProfileView> {
               Card(
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                 child: Padding(
-                  padding: const EdgeInsets.all(16),
+                  padding: const EdgeInsets.all(AppTheme.spacing),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -166,7 +177,7 @@ class _ProfileViewState extends State<ProfileView> {
                 ),
               ),
 
-              const SizedBox(height: 24),
+              const SizedBox(height: AppTheme.spacing * 1.5),
 
               ElevatedButton.icon(
                   onPressed: () {
@@ -186,11 +197,15 @@ class _ProfileViewState extends State<ProfileView> {
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(content: Text('Profil gespeichert')),
                       );
-                      Navigator.pop(context);
+                      if (Navigator.of(context).canPop()) {
+                        context.pop(true);
+                      } else {
+                        context.go(AppRoutes.diary);
+                      }
                     }
                   },
                 icon: const Icon(Icons.save),
-                label: const Text("Speichern"),
+                label: Text(AppStrings.save),
               ),
             ],
           ),
