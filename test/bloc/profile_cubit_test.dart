@@ -2,7 +2,6 @@ import 'package:balance_meal/bloc/profile/profile_cubit.dart';
 import 'package:balance_meal/models/user_profile.dart';
 import 'package:balance_meal/models/weight_entry.dart';
 import 'package:balance_meal/services/i_profile_service.dart';
-import 'package:balance_meal/services/storage_exception.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:hive/hive.dart';

@@ -6,7 +6,6 @@ import 'package:balance_meal/common/app_theme.dart';
 
 import 'package:balance_meal/models/food_item.dart';
 import 'package:balance_meal/models/meal.dart';
-import 'package:balance_meal/ui/progress/calorie_chart.dart';
 
 class MealEditView extends StatefulWidget {
   final Meal? existingMeal;

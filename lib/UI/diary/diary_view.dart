@@ -10,7 +10,6 @@ import 'package:balance_meal/bloc/profile/profile_cubit.dart';
 import 'package:go_router/go_router.dart';
 import '../../common/app_routes.dart';
 import 'meal_card.dart';
-import 'package:balance_meal/router/app_router.dart';
 import 'nutrient_progress_bar.dart';
 import 'package:balance_meal/common/app_theme.dart';
 import 'package:balance_meal/common/app_strings.dart';
@@ -118,7 +117,7 @@ class DiaryView extends StatelessWidget {
                               NutrientProgressBar(
                                 label: "Kohlenhydr",
                                 value: totalCarbs,
-                                goal: profile.carbGoal?.clamp(200, 10000) ?? 70,
+                                goal: profile.carbGoal.clamp(200, 10000) ?? 70,
                                 color: Colors.cyan,
                               ),
                             ],

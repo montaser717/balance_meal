@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:balance_meal/common/app_theme.dart';
 
 class NutrientProgressBar extends StatelessWidget {
   final String label;
