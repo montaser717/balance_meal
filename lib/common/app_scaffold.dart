@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:balance_meal/common/app_theme.dart';
 import 'package:balance_meal/common/app_strings.dart';
 
 class AppScaffold extends StatelessWidget {
