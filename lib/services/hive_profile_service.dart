@@ -1,19 +1,36 @@
 import 'package:hive/hive.dart';
 
-import '../models/user_profile.dart';
+import 'package:balance_meal/models/user_profile.dart';
+import 'i_profile_service.dart';
+import 'storage_exception.dart';
 
-class HiveProfileService {
-  final _box = Hive.box<UserProfile>('profileBox');
+class HiveProfileService implements IProfileService {
+  final Box<UserProfile> _box = Hive.box<UserProfile>('profileBox');
 
-  UserProfile? loadProfile() {
-    return _box.get('profile');
+  @override
+  Future<UserProfile?> loadProfile() async {
+    try {
+      return _box.get('profile');
+    } catch (e) {
+      throw StorageException('Fehler beim Laden des Profils');
+    }
   }
 
+  @override
   Future<void> saveProfile(UserProfile profile) async {
-    await _box.put('profile', profile);
+    try {
+      await _box.put('profile', profile);
+    } catch (e) {
+      throw StorageException('Fehler beim Speichern des Profils');
+    }
   }
 
-  void deleteProfile() {
-    _box.delete('profile');
+  @override
+  Future<void> deleteProfile() async {
+    try {
+      await _box.delete('profile');
+    } catch (e) {
+      throw StorageException('Fehler beim Löschen des Profils');
+    }
   }
 }

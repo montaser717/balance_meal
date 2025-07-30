@@ -1,4 +1,4 @@
-import '../models/meal.dart';
+import 'package:balance_meal/models/meal.dart';
 
 abstract class IMealService {
   Future<List<Meal>> loadMeals();
