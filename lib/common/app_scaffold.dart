@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import '../UI/profile/profile_view.dart';
+import 'package:balance_meal/common/app_theme.dart';
+import 'package:balance_meal/common/app_strings.dart';
 
 class AppScaffold extends StatelessWidget {
   final StatefulNavigationShell navigationShell;
@@ -10,33 +11,6 @@ class AppScaffold extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      drawer: Drawer(
-        child: ListView(
-          padding: EdgeInsets.zero,
-          children: [
-            const DrawerHeader(
-              decoration: BoxDecoration(color: Colors.green),
-              child: Text('Menü', style: TextStyle(color: Colors.white, fontSize: 24)),
-            ),
-            ListTile(
-              leading: const Icon(Icons.person),
-              title: const Text('Profil'),
-              onTap: () {
-                Navigator.pop(context);
-                Navigator.push(context, MaterialPageRoute(builder: (_) => const ProfileView()));
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.settings),
-              title: const Text('Einstellungen'),
-              onTap: () {
-                Navigator.pop(context);
-                // Öffne später z.B. SettingsView()
-              },
-            ),
-          ],
-        ),
-      ),
       body: navigationShell,
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: navigationShell.currentIndex,
@@ -45,9 +19,10 @@ class AppScaffold extends StatelessWidget {
             navigationShell.goBranch(index);
           }
         },
-        items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.book), label: 'Tagebuch'),
-          BottomNavigationBarItem(icon: Icon(Icons.bar_chart), label: 'Fortschritt'),
+        items: [
+          BottomNavigationBarItem(icon: const Icon(Icons.bar_chart), label: AppStrings.progress),
+          BottomNavigationBarItem(icon: const Icon(Icons.book), label: AppStrings.diary),
+          BottomNavigationBarItem(icon: const Icon(Icons.settings), label: AppStrings.settings),
         ],
       ),
     );
