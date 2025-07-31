@@ -42,11 +42,6 @@ BalanceMeal gives her the tools to stay informed and consistent.
 <a href="https://raw.githubusercontent.com/montaser717/balance_meal/main/assets/github/settings_screen.png"><img src="assets/github/settings_screen.png" alt="Settings Screen" height="480px"/></a>
 
 
-📓 Diary	Log meals with their nutritional values (calories, macros)
-📝 Meal Edit Add meals and insert Foods
-👤 Settings	Manage account change Language and Appearance
-
-
 
 ## 🏗 Architecture
 
