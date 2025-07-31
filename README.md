@@ -36,10 +36,10 @@ BalanceMeal gives her the tools to stay informed and consistent.
 
 ## 🖼 Screens Overview
 
-<a href="https://raw.githubusercontent.com/montaser717/balance_meal/main/assets/github/diary_view.png"><img src="assets/github/diary_view.png" alt="Diary Screen" height="480px"/></a>
-<a href="https://raw.githubusercontent.com/montaser717/balance_meal/main/assets/github/meal_edit_view.png"><img src="assets/github/meal_edit_view.png" alt="Diary Screen" height="480px"/></a>
-<a href="https://raw.githubusercontent.com/montaser717/balance_meal/main/assets/github/food_item_screen.png"><img src="assets/github/food_item_screen.png" alt="Diary Screen" height="480px"/></a>
-<a href="https://raw.githubusercontent.com/montaser717/balance_meal/main/assets/github/settings_screen.png"><img src="assets/github/settings_screen.png" alt="Settings Screen" height="480px"/></a>
+<a href="https://raw.githubusercontent.com/montaser717/balance_meal/main/assets/github/diary_view.png"><img src="assets/github/diary_view.png" alt="Diary Screen" height="360px"/></a>
+<a href="https://raw.githubusercontent.com/montaser717/balance_meal/main/assets/github/meal_edit_view.png"><img src="assets/github/meal_edit_view.png" alt="Diary Screen" height="360px"/></a>
+<a href="https://raw.githubusercontent.com/montaser717/balance_meal/main/assets/github/food_item_screen.png"><img src="assets/github/food_item_screen.png" alt="Diary Screen" height="360px"/></a>
+<a href="https://raw.githubusercontent.com/montaser717/balance_meal/main/assets/github/settings_screen.png"><img src="assets/github/settings_screen.png" alt="Settings Screen" height="360px"/></a>
 
 
 
