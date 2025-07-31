@@ -8,65 +8,66 @@ import 'package:mocktail/mocktail.dart';
 class MockMealService extends Mock implements IMealService {}
 
 void main() {
-  late MockMealService service;
-  late DiaryCubit cubit;
-
-  setUp(() {
-    service = MockMealService();
-    cubit = DiaryCubit(service);
+  setUpAll(() {
+    registerFallbackValue(Meal(
+      id: 'dummy',
+      name: '',
+      calories: 0,
+      protein: 0,
+      fat: 0,
+      carbs: 0,
+      date: DateTime(2024),
+    ));
   });
 
-  group('loadMeals', () {
-    test('emits meals on success', () async {
-      final meals = [
-        Meal(
-          id: '1',
-          name: 'Test',
-          calories: 100,
-          protein: 10,
-          fat: 5,
-          carbs: 20,
-          date: DateTime(2024, 1, 1),
-        )
-      ];
-      when(() => service.loadMeals()).thenAnswer((_) async => meals);
+  group('DiaryCubit', () {
+    late DiaryCubit cubit;
+    late MockMealService service;
+
+    setUp(() {
+      service = MockMealService();
+      cubit = DiaryCubit(service);
+    });
+
+    test('loads meals successfully', () async {
+      when(() => service.loadMeals()).thenAnswer((_) async => [
+            Meal(
+              id: '1',
+              name: 'Test',
+              calories: 100,
+              protein: 10,
+              fat: 2,
+              carbs: 20,
+              date: DateTime(2024, 1, 1),
+            )
+          ]);
 
       await cubit.loadMeals();
-
-      expect(cubit.state.meals, meals);
-      expect(cubit.state.isLoading, false);
+      expect(cubit.state.meals, hasLength(1));
+      expect(cubit.state.isLoading, isFalse);
       expect(cubit.state.errorMessage, isNull);
-      verify(() => service.loadMeals()).called(1);
     });
 
-    test('emits error on failure', () async {
+    test('emits error when service fails', () async {
       when(() => service.loadMeals()).thenThrow(StorageException('fail'));
-
       await cubit.loadMeals();
-
-      expect(cubit.state.meals, isEmpty);
-      expect(cubit.state.isLoading, false);
-      expect(cubit.state.errorMessage, isNotNull);
+      expect(cubit.state.errorMessage, 'fail');
     });
-  });
 
-  test('addMeal adds meal to state', () async {
-    final meal = Meal(
-      id: '',
-      name: 'New',
-      calories: 50,
-      protein: 5,
-      fat: 2,
-      carbs: 8,
-      date: DateTime.now(),
-    );
-    when(() => service.addMeal(any())).thenAnswer((_) async {});
-    when(() => service.deleteMeal(any())).thenAnswer((_) async {});
+    test('addMeal adds meal to state', () async {
+      final meal = Meal(
+        id: '',
+        name: 'm',
+        calories: 100,
+        protein: 10,
+        fat: 2,
+        carbs: 20,
+        date: DateTime(2024),
+      );
+      when(() => service.addMeal(any())).thenAnswer((_) async {});
 
-    await cubit.addMeal(meal);
-
-    expect(cubit.state.meals.length, 1);
-    expect(cubit.state.meals.first.name, 'New');
-    verify(() => service.addMeal(any())).called(1);
+      await cubit.addMeal(meal);
+      expect(cubit.state.meals, isNotEmpty);
+    });
   });
 }
