@@ -34,6 +34,19 @@ class AppStrings {
       'dark': 'Dunkel',
       'light': 'Hell',
       'system': 'System',
+      'goal': 'Ziel',
+      'consumed': 'verbraucht',
+      'left': 'übrig',
+      'proteins': 'Proteine',
+      'fats': 'Fette',
+      'carbs': 'Kohlenhydr',
+      'mealName': 'Mahlzeitname',
+      'name': 'Name',
+      'amount': 'Menge (g)',
+      'fieldHint': 'Bitte alle Felder korrekt ausfüllen',
+      'requiredField': 'Pflichtfeld',
+      'invalidNumber': 'ungültige Zahl',
+      'weight': 'Gewicht',
     },
     'en': {
       'menu': 'Menu',
@@ -63,6 +76,19 @@ class AppStrings {
       'dark': 'Dark',
       'light': 'Light',
       'system': 'System',
+      'goal': 'Goal',
+      'consumed': 'consumed',
+      'left': 'left',
+      'proteins': 'Proteins',
+      'fats': 'Fats',
+      'carbs': 'Carbs',
+      'mealName': 'meal name',
+      'name': 'name',
+      'amount': 'amount (g)',
+      'fieldHint': 'Please fill in all fields correctly.',
+      'requiredField': 'Required field',
+      'invalidNumber': 'invalid number',
+      'weight': 'weight',
     }
   };
 
@@ -102,4 +128,17 @@ class AppStrings {
   static String get dark => _t('dark');
   static String get light => _t('light');
   static String get system => _t('system');
+  static String get goal => _t('goal');
+  static String get consumed => _t('consumed');
+  static String get left => _t('left');
+  static String get proteins => _t('proteins');
+  static String get fats => _t('fats');
+  static String get carbs => _t('carbs');
+  static String get mealName => _t('mealName');
+  static String get name => _t('name');
+  static String get amount => _t('amount');
+  static String get fieldHint => _t('fieldHint');
+  static String get requiredField => _t('requiredField');
+  static String get invalidNumber => _t('invalidNumber');
+  static String get weight => _t('weight');
 }

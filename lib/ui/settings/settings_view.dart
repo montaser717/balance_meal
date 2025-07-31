@@ -13,12 +13,13 @@ class SettingsView extends StatelessWidget {
   Widget build(BuildContext context) {
     final cubit = context.watch<SettingsCubit>();
     final state = cubit.state;
+    final textTheme = Theme.of(context).textTheme;
     return SafeArea(
       child: Padding(
         padding: const EdgeInsets.all(AppTheme.spacing),
         child: ListView(
           children: [
-            Text(AppStrings.settings, style: AppTheme.pageTitle),
+            Text(AppStrings.settings, style: textTheme.titleLarge),
             const SizedBox(height: AppTheme.spacing),
             ListTile(
               leading: const Icon(Icons.person),

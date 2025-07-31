@@ -21,7 +21,7 @@ class SettingsState {
 }
 
 class SettingsCubit extends Cubit<SettingsState> {
-  final Box _box;
+  final Box<dynamic> _box;
 
   SettingsCubit(this._box) : super(const SettingsState()) {
     _load();

@@ -73,20 +73,20 @@ class _MealEditViewState extends State<MealEditView> {
             key: _formKey,
             child: SingleChildScrollView(
               child: ConstrainedBox(
-                constraints: const BoxConstraints(maxHeight: 400),
+                constraints: const BoxConstraints(maxHeight: 300),
                 child: Column(
                   children: [
-                    _buildTextField("Name", nameController, isNumeric: false),
+                    _buildTextField(AppStrings.name, nameController, isNumeric: false),
                     const SizedBox(height: 12),
 
                     Row(
                       children: [
                         Expanded(
-                          child: _buildTextField("Kalorien", calController),
+                          child: _buildTextField(AppStrings.calories, calController),
                         ),
                         const SizedBox(width: 8),
                         Expanded(
-                          child: _buildTextField("Proteine", protController),
+                          child: _buildTextField(AppStrings.proteins, protController),
                         ),
                       ],
                     ),
@@ -94,19 +94,19 @@ class _MealEditViewState extends State<MealEditView> {
                     Row(
                       children: [
                         Expanded(
-                          child: _buildTextField("Fette", fatController),
+                          child: _buildTextField(AppStrings.fats, fatController),
                         ),
                         const SizedBox(width: 8),
                         Expanded(
                           child: _buildTextField(
-                            "Kohlenhydrate",
+                            AppStrings.carbs,
                             carbController,
                           ),
                         ),
                       ],
                     ),
                     const SizedBox(height: 12),
-                    _buildTextField("Menge (g)", gramsController),
+                    _buildTextField(AppStrings.amount, gramsController),
                   ],
                 ),
               ),
@@ -132,8 +132,8 @@ class _MealEditViewState extends State<MealEditView> {
                   Navigator.pop(context, ing);
                 } else {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text("Bitte alle Felder korrekt ausfüllen"),
+                    SnackBar(
+                      content: Text(AppStrings.fieldHint),
                     ),
                   );
                 }
@@ -181,6 +181,8 @@ class _MealEditViewState extends State<MealEditView> {
     TextEditingController controller, {
     bool isNumeric = true,
   }) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
     return TextFormField(
       controller: controller,
       keyboardType:
@@ -193,11 +195,11 @@ class _MealEditViewState extends State<MealEditView> {
               : null,
       validator: (value) {
         if (value == null || value.trim().isEmpty) {
-          return 'Pflichtfeld';
+          return AppStrings.requiredField;
         }
         if (isNumeric &&
             (double.tryParse(value) == null || double.parse(value) < 0)) {
-          return 'Ungültige Zahl';
+          return AppStrings.invalidNumber;
         }
         return null;
       },
@@ -205,7 +207,7 @@ class _MealEditViewState extends State<MealEditView> {
         labelText: label,
         hintText: isNumeric ? "z. B. 100" : "z. B. Apfel",
         filled: true,
-        fillColor: AppTheme.cardColor,
+        fillColor: colorScheme.surface,
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
         isDense: true,
       ),
@@ -214,6 +216,8 @@ class _MealEditViewState extends State<MealEditView> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
     return Scaffold(
       appBar: AppBar(
         title: Text(AppStrings.newMeal),
@@ -231,7 +235,7 @@ class _MealEditViewState extends State<MealEditView> {
               controller: nameController,
               decoration: InputDecoration(
                 prefixIcon: const Icon(Icons.edit),
-                labelText: "Mahlzeitname",
+                labelText: AppStrings.mealName,
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
                 ),
@@ -243,9 +247,9 @@ class _MealEditViewState extends State<MealEditView> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                _NutrientBox(label: "Proteine", value: totalProteins),
-                _NutrientBox(label: "Fette", value: totalFats),
-                _NutrientBox(label: "Kohlenhydr", value: totalCarbs),
+                _NutrientBox(label: AppStrings.proteins, value: totalProteins),
+                _NutrientBox(label: AppStrings.fats, value: totalFats),
+                _NutrientBox(label: AppStrings.carbs, value: totalCarbs),
               ],
             ),
             const SizedBox(height: 12),
@@ -257,7 +261,7 @@ class _MealEditViewState extends State<MealEditView> {
             Expanded(
               child: ListView.separated(
                 itemCount: foodItems.length,
-                separatorBuilder: (_, __) => const SizedBox(height: 12),
+                separatorBuilder: (_, _) => const SizedBox(height: 12),
                 itemBuilder: (context, index) {
                   final item = foodItems[index];
                   return Container(
@@ -266,7 +270,7 @@ class _MealEditViewState extends State<MealEditView> {
                       horizontal: AppTheme.spacing,
                     ),
                     decoration: BoxDecoration(
-                      color: AppTheme.cardColor,
+                      color: colorScheme.surface,
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: Row(
@@ -364,7 +368,7 @@ class _MealEditViewState extends State<MealEditView> {
                       id: widget.existingMeal?.id ?? mealId,
                       name:
                           nameController.text.isEmpty
-                              ? 'Mahlzeit'
+                              ? AppStrings.meals
                               : nameController.text,
                       calories: totalCalories,
                       protein: totalProteins,
@@ -402,9 +406,9 @@ class _NutrientBox extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        Text(label, style: const TextStyle(fontWeight: FontWeight.bold)),
+        Text(label, style: Theme.of(context).textTheme.titleSmall),
         const SizedBox(height: 4),
-        Text("$value g"),
+        Text("$value g", style: Theme.of(context).textTheme.titleSmall,),
       ],
     );
   }

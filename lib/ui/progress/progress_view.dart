@@ -5,9 +5,7 @@ import 'package:balance_meal/common/app_strings.dart';
 import 'package:hive_flutter/adapters.dart';
 import 'package:intl/intl.dart';
 import 'dart:math';
-import 'package:hive/hive.dart';
 import '../../models/weight_entry.dart';
-import 'calorie_chart.dart';
 
 class ProgressView extends StatefulWidget {
   const ProgressView({super.key});
@@ -18,7 +16,6 @@ class ProgressView extends StatefulWidget {
 }
 
 class _ProgressViewState extends State<ProgressView> {
-  String selectedRange = '3 Monate';
   late Box<WeightEntry> weightBox;
 
   @override
@@ -36,27 +33,9 @@ class _ProgressViewState extends State<ProgressView> {
     return list;
   }
 
-  List<Map<String, dynamic>> _filteredWeights(List<Map<String, dynamic>> weights) {
-    final now = DateTime.now();
-    switch (selectedRange) {
-      case '1 Monat':
-        return weights.where((e) => e['date'].isAfter(now.subtract(const Duration(days: 30)))).toList();
-      case '2 Monate':
-        return weights.where((e) => e['date'].isAfter(now.subtract(const Duration(days: 60)))).toList();
-      case '3 Monate':
-        return weights.where((e) => e['date'].isAfter(now.subtract(const Duration(days: 90)))).toList();
-      case '6 Monate':
-        return weights.where((e) => e['date'].isAfter(now.subtract(const Duration(days: 180)))).toList();
-      case '1 Jahr':
-        return weights.where((e) => e['date'].isAfter(now.subtract(const Duration(days: 365)))).toList();
-      case 'Alle':
-      default:
-        return weights;
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
+    final textTheme = Theme.of(context).textTheme;
     return ValueListenableBuilder<Box<WeightEntry>>(
       valueListenable: weightBox.listenable(),
       builder: (context, box, _) {
@@ -65,7 +44,7 @@ class _ProgressViewState extends State<ProgressView> {
           return Center(child: Text(AppStrings.noWeights));
         }
 
-        final weights = _filteredWeights(allWeights);
+        final weights = allWeights;
         final firstDate = weights.first['date'] as DateTime;
         final allValues = weights.map((e) => e['weight'] as double);
         final minY = (allValues.reduce(min) - 0.5).floorToDouble();
@@ -82,21 +61,15 @@ class _ProgressViewState extends State<ProgressView> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text("Gewicht", style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
-                const SizedBox(height: 4),
+                Text(AppStrings.progress, style: textTheme.titleLarge),
+                const SizedBox(height: AppTheme.spacing * 2),
                 Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    DropdownButton<String>(
-                      value: selectedRange,
-                      items: ['1 Monat', '2 Monate', '3 Monate', '6 Monate', '1 Jahr', 'Alle']
-                          .map((label) => DropdownMenuItem(value: label, child: Text(label)))
-                          .toList(),
-                      onChanged: (value) => setState(() => selectedRange = value!),
-                    ),
+                    Text(AppStrings.weight, style: textTheme.titleMedium),
                   ],
                 ),
-                const SizedBox(height: AppTheme.spacing * 0.75),
+                const SizedBox(height: AppTheme.spacing * 1),
                 SingleChildScrollView(
               scrollDirection: Axis.horizontal,
               child: Container(
@@ -156,7 +129,7 @@ class _ProgressViewState extends State<ProgressView> {
                         isStrokeCapRound: true,
                         dotData: FlDotData(
                           show: true,
-                          getDotPainter: (spot, _, __, ___) => FlDotCirclePainter(
+                          getDotPainter: (spot, _, _, _) => FlDotCirclePainter(
                             radius: 4,
                             color: Colors.white,
                             strokeWidth: 3,
@@ -201,7 +174,6 @@ class _ProgressViewState extends State<ProgressView> {
               ),
             ),
             const SizedBox(height: 32),
-            CalorieChart(),
           ],
         ),
       ),
