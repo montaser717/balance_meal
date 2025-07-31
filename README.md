@@ -1,7 +1,7 @@
 # 🥗 BalanceMeal
 A Flutter-based nutrition tracking app that helps users document their meals, monitor calorie intake, and track progress over time.
 
-### 🧩 What Problem Does It Solve?
+## 🧩 What Problem Does It Solve?
 Many people struggle to maintain a healthy diet simply because they lack awareness of what they consume. Whether they unintentionally eat too much or too little, misjudge the nutritional value of food, or don't have an easy way to track their intake — BalanceMeal offers a simple, structured solution.
 
 With BalanceMeal, users can:
@@ -16,7 +16,7 @@ With BalanceMeal, users can:
 
 🎯 Set calorie goals and visually compare them to actual intake
 
-### 🎯 Who Is It For?
+## 🎯 Who Is It For?
 Persona: Leonie, 28, Student & Fitness Enthusiast
 
 Leonie has recently started focusing more on fitness and healthy eating. She works out three times a week and wants to lose a few kilos while maintaining her energy levels.
@@ -34,20 +34,12 @@ She wants to:
 
 BalanceMeal gives her the tools to stay informed and consistent.
 
-### 🖼 Screens Overview
+## 🖼 Screens Overview
 
-<a href="https://raw.githubusercontent.com/montaser717/balance_meal/main/assets/github/diary_view.png"><img src="assets/github/
-diary_view.png" alt="Diary Screen" height="240px"/></a>
-<a href="https://raw.githubusercontent.com/montaser717/balance_meal/main/assets/github/meal_edit_view.png"><img src="assets/github/
-meal_edit_view.png" alt="Diary Screen" height="240px"/></a>
-<a href="https://raw.githubusercontent.com/montaser717/balance_meal/main/assets/github/food_item_screen.png"><img src="assets/github/
-food_item_screen.png" alt="Diary Screen" height="240px"/></a>
-<a href="https://raw.githubusercontent.com/montaser717/balance_meal/main/assets/github/settings_screen.png"><img src="assets/github/settings_screen.png" alt="Settings Screen" height="240px"/></a>
-
-
-📓 Diary	Log meals with their nutritional values (calories, macros)
-📝 Meal Edit Add meals and insert Foods
-👤 Settings	Manage account change Language and Appearance
+<a href="https://raw.githubusercontent.com/montaser717/balance_meal/main/assets/github/diary_view.png"><img src="assets/github/diary_view.png" alt="Diary Screen" height="480px"/></a>
+<a href="https://raw.githubusercontent.com/montaser717/balance_meal/main/assets/github/meal_edit_view.png"><img src="assets/github/meal_edit_view.png" alt="Diary Screen" height="480px"/></a>
+<a href="https://raw.githubusercontent.com/montaser717/balance_meal/main/assets/github/food_item_screen.png"><img src="assets/github/food_item_screen.png" alt="Diary Screen" height="480px"/></a>
+<a href="https://raw.githubusercontent.com/montaser717/balance_meal/main/assets/github/settings_screen.png"><img src="assets/github/settings_screen.png" alt="Settings Screen" height="480px"/></a>
 
 
 
