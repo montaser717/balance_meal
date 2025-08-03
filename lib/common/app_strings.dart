@@ -47,6 +47,28 @@ class AppStrings {
       'requiredField': 'Pflichtfeld',
       'invalidNumber': 'ungültige Zahl',
       'weight': 'Gewicht',
+      'Months': 'Monate',
+      'tracking' : 'Gewicht tracken',
+      'week' : '1 Woche',
+      'all': 'Alle',
+      'enter weight' : 'Gewicht eingeben',
+      'for example' : 'z.B. 75',
+      'are you sure that you want to delete all the meals' : 'Bist du sicher, dass du alle heutigen Mahlzeiten löschen möchtest?"',
+      'hight':'Größe',
+      'Sex':'Geschlecht',
+      'female':'weiblich',
+      'male':'mänlich',
+      'low':'gering',
+      'middel':'mittel',
+      'high':'hoch',
+      'hold weight':'halten',
+      'gain weight':'zunehmen',
+      'lose weight':'abnehmen',
+      'Body deatils':'Körperdaten',
+      'Life style':'Lebensstil',
+
+
+
     },
     'en': {
       'menu': 'Menu',
@@ -89,7 +111,30 @@ class AppStrings {
       'requiredField': 'Required field',
       'invalidNumber': 'invalid number',
       'weight': 'weight',
-    }
+      'Months': 'Months',
+      'tracking' : 'tracking',
+      'week' : '1 week',
+      'all' : 'all',
+      'enter weight' : 'enter weight',
+      'for example' : 'for example 75',
+      'are you sure that you want to delete all the meals' :'are you sure that you want to delete all the meals',
+      'age':'age',
+      'hight':'hight',
+      'Sex':'Sex',
+      'female':'female',
+      'male':'male',
+      'low':'low',
+      'middel':'middel',
+      'high':'high',
+      'hold weight':'hold weight',
+      'gain weight':'gain weight',
+      'lose weight':'lose weight',
+      'Body deatils':'Body deatils',
+      'Life style':'Life style',
+
+
+
+}
   };
 
   static void updateLocale(Locale locale) {
@@ -141,4 +186,24 @@ class AppStrings {
   static String get requiredField => _t('requiredField');
   static String get invalidNumber => _t('invalidNumber');
   static String get weight => _t('weight');
+  static String get months => _t('Months');
+  static String get tracking => _t('tracking');
+  static String get week => _t('week');
+  static String get all => _t('all');
+  static String get example => _t('for example');
+  static String get entrWeight => _t('enter weight');
+  static String get warining => _t('are you sure that you want to delete all the meals');
+  static String get hight => _t('hight');
+  static String get Sex => _t('Sex');
+  static String get female => _t('female');
+  static String get male => _t('male');
+  static String get low => _t('low');
+  static String get middel => _t('middel');
+  static String get high => _t('high');
+  static String get holdWeight => _t('hold weight');
+  static String get gainWeight => _t('gain weight');
+  static String get loseWeight => _t('lose weight');
+  static String get age => _t('age');
+  static String get details => _t('Body deatils');
+  static String get lifestyle => _t('Life style');
 }

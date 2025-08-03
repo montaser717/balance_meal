@@ -218,6 +218,7 @@ class _MealEditViewState extends State<MealEditView> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
+    final textScheme = theme.textTheme ;
     return Scaffold(
       appBar: AppBar(
         title: Text(AppStrings.newMeal),
@@ -253,7 +254,7 @@ class _MealEditViewState extends State<MealEditView> {
               ],
             ),
             const SizedBox(height: 12),
-            Center(child: Text("${totalCalories.toStringAsFixed(1)} kcal")),
+            Center(child: Text("${totalCalories.toStringAsFixed(1)} kcal",style:textScheme.titleSmall)),
 
             const SizedBox(height: AppTheme.spacing * 1.5),
 
@@ -283,16 +284,15 @@ class _MealEditViewState extends State<MealEditView> {
                                   existingItem: item,
                                   index: index,
                                 ),
-                            child: Text(item.name),
+                            child: Text(item.name,style: textScheme.titleMedium),
                           ),
                         ),
                         Row(
                           children: [
                             Text(
                               "${item.calories} kcal",
-                              style: const TextStyle(
-                                fontWeight: FontWeight.bold,
-                              ),
+                              style: textScheme.titleMedium
+
                             ),
                             const SizedBox(width: 8),
                             IconButton(

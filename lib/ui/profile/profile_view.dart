@@ -4,7 +4,6 @@ import 'package:go_router/go_router.dart';
 import 'package:balance_meal/common/app_strings.dart';
 import 'package:balance_meal/common/app_theme.dart';
 import 'package:balance_meal/common/app_routes.dart';
-
 import 'package:balance_meal/bloc/profile/profile_cubit.dart';
 import 'package:balance_meal/models/user_profile.dart';
 
@@ -59,6 +58,7 @@ class _ProfileViewState extends State<ProfileView> {
 
   @override
   Widget build(BuildContext context) {
+    final textTheme = Theme.of(context).textTheme;
     return Scaffold(
       appBar: AppBar(title: Text(AppStrings.profile)),
       body: SingleChildScrollView(
@@ -75,28 +75,28 @@ class _ProfileViewState extends State<ProfileView> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text("Körperdaten", style: TextStyle(fontWeight: FontWeight.bold)),
+                      Text(AppStrings.details, style: textTheme.titleMedium),
                       const SizedBox(height: 16),
                       TextFormField(
                         controller: nameController,
-                        decoration: const InputDecoration(
-                          labelText: 'Name',
-                          icon: Icon(Icons.person),
+                        decoration: InputDecoration(
+                          labelText: AppStrings.name,
+                          icon: const Icon(Icons.person),
                         ),
                         validator: (value) =>
-                        value == null || value.isEmpty ? 'Name erforderlich' : null,
+                        value == null || value.isEmpty ? '${AppStrings.name} ${AppStrings.requiredField}' : null,
                       ),
                       TextFormField(
                         controller: ageController,
                         keyboardType: TextInputType.number,
-                        decoration: const InputDecoration(
-                          labelText: 'Alter',
-                          icon: Icon(Icons.cake),
+                        decoration: InputDecoration(
+                          labelText: AppStrings.age,
+                          icon: const Icon(Icons.cake),
                         ),
                         validator: (value) {
                           final age = int.tryParse(value ?? '');
                           if (age == null || age < 10 || age > 120) {
-                            return 'Alter muss zwischen 10–120 sein';
+                            return '${AppStrings.age} muss zwischen 10–120 sein';
                           }
                           return null;
                         },
@@ -104,14 +104,14 @@ class _ProfileViewState extends State<ProfileView> {
                       TextFormField(
                         controller: heightController,
                         keyboardType: const TextInputType.numberWithOptions(decimal: true),
-                        decoration: const InputDecoration(
-                          labelText: 'Größe (m)',
-                          icon: Icon(Icons.height),
+                        decoration: InputDecoration(
+                          labelText: AppStrings.hight,
+                          icon: const Icon(Icons.height),
                         ),
                         validator: (value) {
                           final height = double.tryParse(value ?? '');
                           if (height == null || height < 1.0 || height > 2.5) {
-                            return 'Größe muss zwischen 1.00 und 2.50 sein';
+                            return '${AppStrings.hight} muss zwischen 1.00 und 2.50 sein';
                           }
                           return null;
                         },
@@ -119,14 +119,14 @@ class _ProfileViewState extends State<ProfileView> {
                       TextFormField(
                         controller: weightController,
                         keyboardType: const TextInputType.numberWithOptions(decimal: true),
-                        decoration: const InputDecoration(
-                          labelText: 'Gewicht (kg)',
-                          icon: Icon(Icons.fitness_center),
+                        decoration: InputDecoration(
+                          labelText: AppStrings.weight,
+                          icon: const Icon(Icons.fitness_center),
                         ),
                         validator: (value) {
                           final weight = double.tryParse(value ?? '');
                           if (weight == null || weight <= 0) {
-                            return 'Gewicht muss sinnvoll sein';
+                            return '${AppStrings.weight} muss sinnvoll sein';
                           }
                           return null;
                         },
@@ -143,33 +143,54 @@ class _ProfileViewState extends State<ProfileView> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text("Lebensstil", style: TextStyle(fontWeight: FontWeight.bold)),
+                      Text(AppStrings.lifestyle, style: textTheme.titleMedium),
                       const SizedBox(height: 16),
                       DropdownButtonFormField<String>(
                         value: selectedGender,
-                        items: genders.map((g) => DropdownMenuItem(value: g, child: Text(g))).toList(),
+                        items: genders.map((g) {
+                          final display = {
+                            'maennlich': AppStrings.male,
+                            'weiblich': AppStrings.female,
+                            'divers': 'divers',
+                          }[g] ?? g;
+                          return DropdownMenuItem(value: g, child: Text(display));
+                        }).toList(),
                         onChanged: (val) => setState(() => selectedGender = val!),
-                        decoration: const InputDecoration(
-                          labelText: 'Geschlecht',
-                          icon: Icon(Icons.transgender),
+                        decoration: InputDecoration(
+                          labelText: AppStrings.Sex,
+                          icon: const Icon(Icons.transgender),
                         ),
                       ),
                       DropdownButtonFormField<String>(
                         value: selectedActivity,
-                        items: activities.map((a) => DropdownMenuItem(value: a, child: Text(a))).toList(),
+                        items: activities.map((a) {
+                          final display = {
+                            'gering': AppStrings.low,
+                            'mittel': AppStrings.middel,
+                            'hoch': AppStrings.high,
+                          }[a] ?? a;
+                          return DropdownMenuItem(value: a, child: Text(display));
+                        }).toList(),
                         onChanged: (val) => setState(() => selectedActivity = val!),
                         decoration: const InputDecoration(
-                          labelText: 'Aktivität',
+                          labelText: 'Aktivität', // Optional: in AppStrings ergänzen
                           icon: Icon(Icons.directions_run),
                         ),
                       ),
                       DropdownButtonFormField<String>(
                         value: selectedGoal,
-                        items: goals.map((g) => DropdownMenuItem(value: g, child: Text(g))).toList(),
+                        items: goals.map((g) {
+                          final display = {
+                            'abnehmen': AppStrings.loseWeight,
+                            'zunehmen': AppStrings.gainWeight,
+                            'halten': AppStrings.holdWeight,
+                          }[g] ?? g;
+                          return DropdownMenuItem(value: g, child: Text(display));
+                        }).toList(),
                         onChanged: (val) => setState(() => selectedGoal = val!),
-                        decoration: const InputDecoration(
-                          labelText: 'Ziel',
-                          icon: Icon(Icons.flag),
+                        decoration: InputDecoration(
+                          labelText: AppStrings.goal,
+                          icon: const Icon(Icons.flag),
                         ),
                       ),
                     ],
@@ -180,30 +201,31 @@ class _ProfileViewState extends State<ProfileView> {
               const SizedBox(height: AppTheme.spacing * 1.5),
 
               ElevatedButton.icon(
-                  onPressed: () {
-                    if (_formKey.currentState!.validate()) {
-                      final updatedProfile = UserProfile(
-                        name: nameController.text,
-                        age: int.parse(ageController.text),
-                        height: double.parse(heightController.text),
-                        weight: double.parse(weightController.text),
-                        gender: selectedGender,
-                        activityLevel: selectedActivity,
-                        goal: selectedGoal,
-                      );
+                onPressed: () {
+                  if (_formKey.currentState!.validate()) {
+                    final updatedProfile = UserProfile(
+                      name: nameController.text,
+                      age: int.parse(ageController.text),
+                      height: double.parse(heightController.text),
+                      weight: double.parse(weightController.text),
+                      gender: selectedGender,
+                      activityLevel: selectedActivity,
+                      goal: selectedGoal,
+                    );
 
-                      context.read<ProfileCubit>().saveProfile(updatedProfile);
+                    context.read<ProfileCubit>().saveProfile(updatedProfile);
 
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('Profil gespeichert')),
-                      );
-                      if (Navigator.of(context).canPop()) {
-                        context.pop(true);
-                      } else {
-                        context.go(AppRoutes.diary);
-                      }
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text('${AppStrings.profile} ${AppStrings.save}')),
+                    );
+
+                    if (Navigator.of(context).canPop()) {
+                      context.pop(true);
+                    } else {
+                      context.go(AppRoutes.diary);
                     }
-                  },
+                  }
+                },
                 icon: const Icon(Icons.save),
                 label: Text(AppStrings.save),
               ),

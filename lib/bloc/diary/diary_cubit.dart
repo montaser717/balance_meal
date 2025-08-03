@@ -4,6 +4,7 @@ import 'package:balance_meal/models/meal.dart';
 import 'package:balance_meal/services/i_meal_service.dart';
 import 'package:balance_meal/services/storage_exception.dart';
 import 'diary_state.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class DiaryCubit extends Cubit<DiaryState> {
   final IMealService _mealService;
@@ -71,5 +72,32 @@ class DiaryCubit extends Cubit<DiaryState> {
       emit(state.copyWith(errorMessage: 'Unbekannter Fehler'));
     }
   }
+
+  Future<void> resetIfNewDay() async {
+    final prefs = await SharedPreferences.getInstance();
+    final lastOpenedStr = prefs.getString('lastOpenedDate');
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
+
+    if (lastOpenedStr != null) {
+      final lastOpened = DateTime.parse(lastOpenedStr);
+      final lastDate = DateTime(lastOpened.year, lastOpened.month, lastOpened.day);
+
+      if (today.isAfter(lastDate)) {
+        await _mealService.clearAllMeals();
+        emit(state.copyWith(meals: []));
+      }
+    }
+
+    await prefs.setString('lastOpenedDate', today.toIso8601String());
+    await loadMeals(showLoading: false);
+  }
+
+  Future<void> resetDay() async {
+    await _mealService.clearAllMeals();
+    emit(state.copyWith(meals: []));
+  }
+
+
 
 }

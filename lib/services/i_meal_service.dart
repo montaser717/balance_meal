@@ -5,4 +5,5 @@ abstract class IMealService {
   Future<void> addMeal(Meal meal);
   Future<void> deleteMeal(String id);
   Future<void> updateMeal(Meal meal);
+  Future<void> clearAllMeals();
 }

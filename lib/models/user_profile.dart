@@ -8,11 +8,11 @@ part 'user_profile.g.dart';
 class UserProfile {
   @HiveField(0) final String name;
   @HiveField(1) final int age;
-  @HiveField(2) final double height; // in Metern
-  @HiveField(3) final double weight; // in Kilogramm
-  @HiveField(4) final String gender; // "maennlich", "weiblich"
-  @HiveField(5) final String activityLevel; // "gering", "mittel", "hoch"
-  @HiveField(6) final String goal; // "abnehmen", "halten", "zunehmen"
+  @HiveField(2) final double height;
+  @HiveField(3) final double weight;
+  @HiveField(4) final String gender;
+  @HiveField(5) final String activityLevel;
+  @HiveField(6) final String goal;
 
   UserProfile({
     required this.name,
@@ -44,7 +44,7 @@ class UserProfile {
     );
   }
 
-// Optional: JSON-Serialization für Hive oder Speicherung
+
 }
 
 extension UserProfileCalculations on UserProfile {
@@ -81,11 +81,11 @@ extension UserProfileCalculations on UserProfile {
     }
   }
 
-  int get proteinGoal => (weight * 2).round(); // z. B. 2g Protein pro kg
+  int get proteinGoal => (weight * 2).round();
   int get fatGoal => (weight * 1).round(); // 1g Fett pro kg
   int get carbGoal {
     final kcalRest = calorieGoal - (proteinGoal * 4 + fatGoal * 9);
-    return max((kcalRest / 4).round(), 0); // Nie weniger als 0 g
+    return max((kcalRest / 4).round(), 0);
   }
 }
 

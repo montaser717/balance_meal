@@ -8,6 +8,15 @@ class HiveMealService implements IMealService {
   final Box<Meal> _box = Hive.box<Meal>('meals');
 
   @override
+  Future<void> clearAllMeals() async {
+    try {
+      await _box.clear();
+    } catch (e) {
+      throw StorageException('Fehler beim Löschen der Mahlzeiten');
+    }
+  }
+
+  @override
   Future<List<Meal>> loadMeals() async {
     try {
       return _box.values.toList();

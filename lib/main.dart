@@ -15,6 +15,7 @@ import 'bloc/profile/profile_state.dart';
 import 'bloc/settings/settings_cubit.dart';
 import 'common/app_theme.dart';
 import 'common/app_strings.dart';
+import 'models/daily_calorie_entry.dart';
 import 'models/meal.dart';
 import 'models/weight_entry.dart';
 
@@ -27,10 +28,15 @@ void main() async {
   Hive.registerAdapter(MealAdapter());
   Hive.registerAdapter(FoodItemAdapter());
   Hive.registerAdapter(UserProfileAdapter());
-
+  Hive.registerAdapter(DailyCalorieEntryAdapter());
   await Hive.openBox<UserProfile>('profileBox');
   await Hive.openBox<Meal>('meals');
   await Hive.openBox('settingsBox');
+
+
+  final mealService = HiveMealService();
+  final diaryCubit = DiaryCubit(mealService);
+  await diaryCubit.resetIfNewDay();
 
   runApp(
       MultiBlocProvider(
