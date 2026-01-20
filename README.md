@@ -34,6 +34,26 @@ She wants to:
 
 BalanceMeal gives her the tools to stay informed and consistent.
 
+## 🖼 Screens Overview
+
+<a href="https://raw.githubusercontent.com/montaser717/balance_meal/main/assets/github/diary_view.png">
+  <img src="assets/github/diary_view.png" alt="Diary View" height="360px"/>
+</a>
+<a href="https://raw.githubusercontent.com/montaser717/balance_meal/main/assets/github/diary_view_night.png">
+  <img src="assets/github/diary_view_night.png" alt="Diary View Night" height="360px"/>
+</a>
+<a href="https://raw.githubusercontent.com/montaser717/balance_meal/main/assets/github/meal_edit_view.png">
+  <img src="assets/github/meal_edit_view.png" alt="Meal Edit View" height="360px"/>
+</a>
+<a href="https://raw.githubusercontent.com/montaser717/balance_meal/main/assets/github/food_item_screen.png">
+  <img src="assets/github/food_item_screen.png" alt="Food Item Screen" height="360px"/>
+</a>
+<a href="https://raw.githubusercontent.com/montaser717/balance_meal/main/assets/github/settings_screen.png">
+  <img src="assets/github/settings_screen.png" alt="Settings Screen" height="360px"/>
+</a>
+<a href="https://raw.githubusercontent.com/montaser717/balance_meal/main/assets/github/Diagramms_View.png">
+  <img src="assets/github/Diagramms_View.png" alt="Diagramms View" height="360px"/>
+</a>
 
 ## 🏗 Architecture
 
